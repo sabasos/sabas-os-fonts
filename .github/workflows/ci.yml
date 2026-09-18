@@ -30,7 +30,10 @@ jobs:
         run: cargo install fontc
 
       - name: Install Python dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+          echo "$PWD/.venv/bin" >> $GITHUB_PATH
 
       - name: Install fontspector
         run: pip install fontspector || echo "fontspector not on PyPI yet — install from source"
