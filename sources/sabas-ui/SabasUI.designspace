@@ -116,7 +116,18 @@
       <location><dimension name="Weight" xvalue="300"/></location>
     </source>
     <source filename="SabasUI-Regular.ufo"   familyname="Sabas UI" stylename="Regular">
-      <location><dimension name="Weight" xvalue="400"/></location>
+      <location>
+        <dimension name="Weight"           xvalue="400"/>
+        <dimension name="Width"            xvalue="100"/>
+        <dimension name="Optical Size"     xvalue="16"/>
+        <dimension name="Grade"            xvalue="0"/>
+        <dimension name="Slant"            xvalue="0"/>
+        <dimension name="X Opaque"         xvalue="88"/>
+        <dimension name="Y Opaque"         xvalue="76"/>
+        <dimension name="X Transparent"    xvalue="0"/>
+        <dimension name="Y Transparent LC" xvalue="540"/>
+        <dimension name="Y Transparent UC" xvalue="720"/>
+      </location>
     </source>
     <source filename="SabasUI-Medium.ufo"    familyname="Sabas UI" stylename="Medium">
       <location><dimension name="Weight" xvalue="500"/></location>

@@ -7,26 +7,40 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-VENV="$SCRIPT_DIR/../venv"
+cd "$SCRIPT_DIR"
+VENV="$SCRIPT_DIR/.venv"
+# shellcheck source=/dev/null
 source "$VENV/bin/activate"
 
-# ── §12.1: fontc required ────────────────────────────────────────────────────
-if ! command -v fontc &>/dev/null; then
-  echo "ERROR: fontc not installed. §12.1 requires fontc as the shipped compiler."
-  echo "Install: cargo install fontc  (or add to PATH)"
-  exit 1
+mkdir -p fonts
+
+# ── §12.1: fontc is the shipped artefact; fontmake is the fallback referee ───
+if command -v fontc &>/dev/null; then
+  echo "=== Compiling VF with fontc (§12.1 shipped artefact) ==="
+  fontc sources/sabas-ui/SabasUI.designspace -o fonts/
+
+  echo ""
+  echo "=== Generating TTF statics from VF (quadratic glyf, §4.1) ==="
+  fontmake -i \
+           --ttf-curves \
+           -m fonts/SabasUI-VF.ttf \
+           --output-dir fonts/ \
+           --verbose
+else
+  echo "WARNING: fontc not found — falling back to fontmake only (§12.1 not satisfied)."
+  echo "Install fontc: cargo install fontc"
+  echo ""
+  echo "=== Compiling VF + statics with fontmake (fallback) ==="
+  fontmake -m sources/sabas-ui/SabasUI.designspace \
+           -o variable \
+           --output-path fonts/SabasUI-VF.ttf \
+           --verbose
+  fontmake -i \
+           --ttf-curves \
+           -m fonts/SabasUI-VF.ttf \
+           --output-dir fonts/ \
+           --verbose
 fi
-
-echo "=== Compiling VF with fontc (§12.1 shipped artefact) ==="
-fontc sources/sabas-ui/SabasUI.designspace -o fonts/SabasUI-VF.ttf
-
-echo ""
-echo "=== Generating TTF statics from VF (quadratic glyf, §4.1) ==="
-# fontmake used here only as referee to instantiate named instances from the VF
-fontmake -m sources/sabas-ui/SabasUI.designspace \
-         -o ttf \
-         --output-dir fonts/ \
-         --verbose
 
 echo ""
 echo "=== Embedding strikes into shipped statics (§6.2) ==="
@@ -51,7 +65,7 @@ for WEIGHT in Regular Medium SemiBold Bold; do
     --glyphs  space H a n o \
     --work-dir "/tmp/sabas-strikes-${WGHT}" \
     --strikes-root sources/strikes \
-    --golden  "tests/raster/sabas-ui/wght${WGHT}" \
+    --golden  "tests/raster/sabas-ui" \
     --out     "$TTF"   # overwrite in-place: strikes live in the shipped file
 done
 

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: sabas-fonts
+        working-directory: .
 
     steps:
       - uses: actions/checkout@v4
@@ -24,9 +24,10 @@ jobs:
       - name: Install Rust + fontc (§12.1 shipped compiler)
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
-          source "$HOME/.cargo/env"
-          cargo install fontc
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Build fontc
+        run: cargo install fontc
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
@@ -70,17 +71,11 @@ jobs:
       # ── Gate 6: fontspector §13 ─────────────────────────────────────────
       - name: Gate — fontspector
         run: |
-          if command -v fontspector &>/dev/null; then
-            fontspector fonts/SabasUI-VF.ttf fonts/SabasUI-Regular.ttf \
-              --checkid com.google.fonts/check/stat \
-              --checkid com.google.fonts/check/hhea \
-              --checkid com.google.fonts/check/os2_metrics_match_hhea \
-              --checkid com.google.fonts/check/gasp \
-              || exit 1
-          else
-            echo "SKIP: fontspector not installed"
-            exit 1
-          fi
+          fontspector fonts/SabasUI-VF.ttf fonts/SabasUI-Regular.ttf \
+            --checkid com.google.fonts/check/stat \
+            --checkid com.google.fonts/check/hhea \
+            --checkid com.google.fonts/check/os2_metrics_match_hhea \
+            --checkid com.google.fonts/check/gasp
 
       # ── Gate 7: shaperglot language coverage ───────────────────────────
       - name: Gate — shaperglot
@@ -107,16 +102,12 @@ jobs:
       # ── Gate 8: hb-shape golden regression ─────────────────────────────
       - name: Gate — hb-shape goldens
         run: |
-          if command -v hb-shape &>/dev/null; then
-            python tools/ci_hbshape_goldens.py
-          else
-            echo "SKIP: hb-shape not installed (apt install libharfbuzz-bin)"
-            exit 1
-          fi
+          sudo apt-get install -y libharfbuzz-bin
+          python tools/ci_hbshape_goldens.py
 
       - name: Upload font artefacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: sabas-fonts
-          path: sabas-fonts/fonts/SabasUI-*.ttf
+          path: fonts/SabasUI-*.ttf
