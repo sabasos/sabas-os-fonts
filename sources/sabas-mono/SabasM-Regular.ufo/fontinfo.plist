@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>ascender</key>
+    <integer>750</integer>
+    <key>capHeight</key>
+    <integer>700</integer>
+    <key>copyright</key>
+    <string>Copyright 2026 Sabas OS Contributors</string>
+    <key>descender</key>
+    <integer>-205</integer>
+    <key>familyName</key>
+    <string>Sabas Mono</string>
+    <key>openTypeHheaAscender</key>
+    <integer>800</integer>
+    <key>openTypeHheaDescender</key>
+    <integer>-200</integer>
+    <key>openTypeHheaLineGap</key>
+    <integer>200</integer>
+    <key>openTypeNamePreferredFamilyName</key>
+    <string>Sabas UI</string>
+    <key>openTypeNamePreferredSubfamilyName</key>
+    <string>Regular</string>
+    <key>openTypeOS2Selection</key>
+    <array>
+      <integer>7</integer>
+    </array>
+    <key>openTypeOS2Type</key>
+    <array/>
+    <key>openTypeOS2TypoAscender</key>
+    <integer>800</integer>
+    <key>openTypeOS2TypoDescender</key>
+    <integer>-200</integer>
+    <key>openTypeOS2TypoLineGap</key>
+    <integer>200</integer>
+    <key>openTypeOS2VendorID</key>
+    <string>SBAS</string>
+    <key>openTypeOS2WeightClass</key>
+    <integer>400</integer>
+    <key>openTypeOS2WinAscent</key>
+    <integer>1010</integer>
+    <key>openTypeOS2WinDescent</key>
+    <integer>300</integer>
+    <key>postscriptBlueFuzz</key>
+    <integer>1</integer>
+    <key>postscriptBlueScale</key>
+    <real>0.039625</real>
+    <key>postscriptBlueValues</key>
+    <array>
+      <integer>-12</integer>
+      <integer>0</integer>
+      <integer>515</integer>
+      <integer>535</integer>
+      <integer>690</integer>
+      <integer>710</integer>
+      <integer>740</integer>
+      <integer>760</integer>
+    </array>
+    <key>postscriptFontName</key>
+    <string>SabasUI-Regular</string>
+    <key>postscriptOtherBlues</key>
+    <array>
+      <integer>-215</integer>
+      <integer>-205</integer>
+    </array>
+    <key>postscriptSlantAngle</key>
+    <integer>0</integer>
+    <key>styleMapFamilyName</key>
+    <string>Sabas Mono</string>
+    <key>styleName</key>
+    <string>Regular</string>
+    <key>unitsPerEm</key>
+    <integer>1000</integer>
+    <key>xHeight</key>
+    <integer>525</integer>
+  </dict>
+</plist>

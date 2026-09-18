@@ -1,0 +1,17 @@
+Sabas Project Authors
+=====================
+
+The Sabas font family is designed and engineered by the Sabas Project.
+
+Contributors
+------------
+See the git log for a full list of contributors:
+  git log --format="%aN <%aE>" | sort -u
+
+Reserved Font Names
+-------------------
+  Sabas
+  Sabas UI
+  Sabas Mono
+  Sabas Display
+  Sabas Console

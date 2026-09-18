@@ -1,0 +1,66 @@
+# Sabas Mono - calt texture healing
+# §8: single-glyph input with backtrack/lookahead context.
+# Lookup order: ccmp < ss01 < calt (healing sees post-ligature run).
+# Advance is NEVER modified.
+#
+# Width classes (base glyphs only):
+#   NARROW: i j l t f r I 1 . , ; : ' " ` ! | ( ) [ ] { } / \
+#   WIDE:   m w M W @ % &
+#   NEUTRAL: everything else
+
+@NARROW = [i j l t f r I one period comma semicolon colon
+           quotesingle quotedbl grave exclam bar
+           parenleft parenright bracketleft bracketright
+           braceleft braceright slash backslash];
+
+@WIDE = [m w M W at percent ampersand];
+
+# Variants belong to same width class as base (idempotence + no cascade)
+@NARROW_W1 = [i.wide1 j.wide1 l.wide1 t.wide1 f.wide1 r.wide1 I.wide1
+              one.wide1 period.wide1 comma.wide1 semicolon.wide1 colon.wide1
+              quotesingle.wide1 quotedbl.wide1 grave.wide1 exclam.wide1 bar.wide1
+              parenleft.wide1 parenright.wide1 bracketleft.wide1 bracketright.wide1
+              braceleft.wide1 braceright.wide1 slash.wide1 backslash.wide1];
+
+@NARROW_W2 = [i.wide2 j.wide2 l.wide2 t.wide2 f.wide2 r.wide2 I.wide2
+              one.wide2 period.wide2 comma.wide2 semicolon.wide2 colon.wide2
+              quotesingle.wide2 quotedbl.wide2 grave.wide2 exclam.wide2 bar.wide2
+              parenleft.wide2 parenright.wide2 bracketleft.wide2 bracketright.wide2
+              braceleft.wide2 braceright.wide2 slash.wide2 backslash.wide2];
+
+@WIDE_N1 = [m.narrow1 w.narrow1 M.narrow1 W.narrow1
+            at.narrow1 percent.narrow1 ampersand.narrow1];
+
+# All narrow variants for context (invariant under prior substitution)
+@NARROW_ALL = [@NARROW @NARROW_W1 @NARROW_W2];
+@WIDE_ALL   = [@WIDE @WIDE_N1];
+
+# ── Healing lookups ───────────────────────────────────────────────────────────
+# Defined here; included into feature calt AFTER ss01 lookups.
+
+lookup heal_narrow_2 {
+    # NARROW flanked by narrow on both sides -> widest variant
+    sub @NARROW_ALL @NARROW' @NARROW_ALL by @NARROW_W2;
+} heal_narrow_2;
+
+lookup heal_narrow_1_left {
+    # NARROW with narrow on left only -> wide1
+    sub @NARROW_ALL @NARROW' by @NARROW_W1;
+} heal_narrow_1_left;
+
+lookup heal_narrow_1_right {
+    # NARROW with narrow on right only -> wide1
+    sub @NARROW' @NARROW_ALL by @NARROW_W1;
+} heal_narrow_1_right;
+
+lookup heal_wide_2 {
+    # WIDE flanked by wide on both sides -> narrow1
+    sub @WIDE_ALL @WIDE' @WIDE_ALL by @WIDE_N1;
+} heal_wide_2;
+
+feature calt {
+    lookup heal_narrow_2;
+    lookup heal_narrow_1_left;
+    lookup heal_narrow_1_right;
+    lookup heal_wide_2;
+} calt;

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="questiondown" format="2">
+  <advance width="480"/>
+  <unicode hex="00BF"/>
+  <outline>
+    <contour>
+      <point x="125.21000000000001" y="-131.6" type="line"/>
+      <point x="65.9" y="-131.6" type="line"/>
+      <point x="65.9" y="39.480000000000004" type="line"/>
+      <point x="125.21000000000001" y="39.480000000000004" type="line"/>
+    </contour>
+    <contour>
+      <point x="125.21000000000001" y="-92.12" type="line"/>
+      <point x="65.9" y="-92.12" type="line"/>
+      <point x="65.9" y="92.12" type="line"/>
+      <point x="125.21000000000001" y="92.12" type="line"/>
+    </contour>
+    <contour>
+      <point x="191.11" y="-39.480000000000004" type="line"/>
+      <point x="65.9" y="-39.480000000000004" type="line"/>
+      <point x="65.9" y="39.480000000000004" type="line"/>
+      <point x="191.11" y="39.480000000000004" type="line"/>
+    </contour>
+    <contour>
+      <point x="191.11" y="39.480000000000004" type="line"/>
+      <point x="65.9" y="39.480000000000004" type="line"/>
+      <point x="65.9" y="65.8" type="line"/>
+      <point x="191.11" y="65.8" type="line"/>
+    </contour>
+    <contour>
+      <point x="125.21000000000001" y="105.28" type="line"/>
+      <point x="65.9" y="105.28" type="line"/>
+      <point x="65.9" y="39.480000000000004" type="line"/>
+      <point x="125.21000000000001" y="39.480000000000004" type="line"/>
+    </contour>
+    <contour>
+      <point x="128.505" y="151.34" type="line"/>
+      <point x="59.31" y="151.34" type="line"/>
+      <point x="59.31" y="59.220000000000006" type="line"/>
+      <point x="128.505" y="59.220000000000006" type="line"/>
+    </contour>
+  </outline>
+</glyph>

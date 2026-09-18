@@ -1,0 +1,18 @@
+fonttools>=4.28
+ufolib2>=0.14
+fontmake>=3.0
+ufo2ft>=2.25
+freetype-py>=2.3
+booleanoperations>=0.9
+cu2qu>=1.6
+# Needed by the inspection scripts in tools/strike/dev/ — they shape with
+# HarfBuzz and rasterise with FreeType, then compose the specimen sheets in PIL.
+# They were absent here, so a fresh checkout could build the font but not look
+# at it.
+uharfbuzz>=0.40
+pillow>=10.0
+# §12.1: fontc is the shipped compiler. Install via cargo:
+#   cargo install fontc
+# or download a release binary and add to PATH.
+# fontc is a Rust binary, not a Python package — listed here for documentation.
+# CI will fail if fontc is absent (ci_fontc_divergence.py).

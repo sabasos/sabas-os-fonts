@@ -1,0 +1,36 @@
+# _shared/mark_classes.fea
+# Combining mark classes for mark/mkmk attachment (§8).
+# Anchors are defined per-glyph in the UFO; these classes group marks by type.
+
+# Above marks (U+0300–U+0315 range used in T1/T2)
+@MarkAbove = [
+    gravecomb          # U+0300
+    acutecomb          # U+0301
+    circumflexcomb     # U+0302
+    tildecomb          # U+0303
+    macroncomb         # U+0304
+    brevecomb          # U+0306
+    dotaccentcomb      # U+0307
+    dieresiscomb       # U+0308
+    hookabovecomb      # U+0309  Vietnamese
+    ringcomb           # U+030A
+    hungarumlautcomb   # U+030B
+    caroncomb          # U+030C
+    # U+030D..U+0315 — verticalline, dblverticalline, dblgrave, candrabindu,
+    # invertedbreveabove, turnedcomma, commaabove, reversedcomma and
+    # commaaboveright — are listed here as soon as they are drawn. A glyph class
+    # naming a glyph the UFO does not contain fails the whole compile, so this
+    # class has to track what T1 actually builds rather than what T2 will.
+];
+
+# Below marks
+@MarkBelow = [
+    horncomb           # U+031B  Vietnamese (combining horn)
+    dotbelowcomb       # U+0323
+    commaaccentcomb    # U+0326
+    cedillacomb        # U+0327
+    ogonekcomb         # U+0328
+];
+
+# All combining marks
+@AllMarks = [@MarkAbove @MarkBelow];

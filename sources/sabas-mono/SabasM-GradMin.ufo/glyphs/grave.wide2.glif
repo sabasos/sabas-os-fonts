@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="grave.wide2" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="264.7857142857143" y="509.25925925925924" type="line"/>
+      <point x="173.64285714285714" y="560.1851851851852" type="line"/>
+      <point x="260.2285714285714" y="560.1851851851852" type="line"/>
+      <point x="351.37142857142857" y="509.25925925925924" type="line"/>
+    </contour>
+  </outline>
+</glyph>

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni254D" format="2">
+  <advance width="600"/>
+  <unicode hex="254D"/>
+  <outline>
+    <contour>
+      <point x="26.19047619047619" y="471.42857142857144" type="line"/>
+      <point x="314.2857142857143" y="471.42857142857144" type="line"/>
+      <point x="314.2857142857143" y="576.1904761904761" type="line"/>
+      <point x="26.19047619047619" y="576.1904761904761" type="line"/>
+    </contour>
+    <contour>
+      <point x="471.42857142857144" y="471.42857142857144" type="line"/>
+      <point x="759.5238095238095" y="471.42857142857144" type="line"/>
+      <point x="759.5238095238095" y="576.1904761904761" type="line"/>
+      <point x="471.42857142857144" y="576.1904761904761" type="line"/>
+    </contour>
+  </outline>
+</glyph>

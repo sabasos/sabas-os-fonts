@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="t.wide1" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="289.14285714285717" y="0.0" type="line"/>
+      <point x="496.5714285714286" y="0.0" type="line"/>
+      <point x="496.5714285714286" y="878.4722222222223" type="line"/>
+      <point x="289.14285714285717" y="878.4722222222223" type="line"/>
+    </contour>
+    <contour>
+      <point x="62.85714285714285" y="639.1203703703703" type="line"/>
+      <point x="722.857142857143" y="639.1203703703703" type="line"/>
+      <point x="722.857142857143" y="735.8796296296297" type="line"/>
+      <point x="62.85714285714285" y="735.8796296296297" type="line"/>
+    </contour>
+  </outline>
+</glyph>

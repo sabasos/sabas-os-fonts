@@ -1,0 +1,122 @@
+name: Sabas CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sabas-fonts
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Rust + fontc (§12.1 shipped compiler)
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          source "$HOME/.cargo/env"
+          cargo install fontc
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install fontspector
+        run: pip install fontspector || echo "fontspector not on PyPI yet — install from source"
+
+      - name: Install shaperglot
+        run: pip install shaperglot
+
+      - name: Build masters
+        run: |
+          python tools/build_weight_masters.py
+          python tools/build_medium_master.py
+          python tools/build_parametric_masters.py
+          python tools/build_t2_glyphs.py
+
+      - name: Compile fonts (fontc VF + fontmake statics)
+        run: bash build.sh
+
+      # ── Gate 1: Strike matrix §6.2 ─────────────────────────────────────
+      - name: Gate — Strike matrix
+        run: python tools/run_strike_matrix.py
+
+      # ── Gate 2: Strike conformance §6.4 ────────────────────────────────
+      - name: Gate — Strike conformance
+        run: python tools/ci_strike_conformance.py
+
+      # ── Gate 3: Patch format ────────────────────────────────────────────
+      - name: Gate — Patch format
+        run: python tools/ci_patch_format.py
+
+      # ── Gate 4: Static ≡ Variable §5.2 ─────────────────────────────────
+      - name: Gate — Static ≡ Variable
+        run: python tools/ci_static_vs_variable.py
+
+      # ── Gate 5: fontc divergence §12.1 ─────────────────────────────────
+      - name: Gate — fontc divergence
+        run: python tools/ci_fontc_divergence.py
+
+      # ── Gate 6: fontspector §13 ─────────────────────────────────────────
+      - name: Gate — fontspector
+        run: |
+          if command -v fontspector &>/dev/null; then
+            fontspector fonts/SabasUI-VF.ttf fonts/SabasUI-Regular.ttf \
+              --checkid com.google.fonts/check/stat \
+              --checkid com.google.fonts/check/hhea \
+              --checkid com.google.fonts/check/os2_metrics_match_hhea \
+              --checkid com.google.fonts/check/gasp \
+              || exit 1
+          else
+            echo "SKIP: fontspector not installed"
+            exit 1
+          fi
+
+      # ── Gate 7: shaperglot language coverage ───────────────────────────
+      - name: Gate — shaperglot
+        run: |
+          python - <<'EOF'
+          import subprocess, sys
+          langs = ["en", "vi", "ro", "tr", "pl", "cs", "hu", "de", "fr", "es"]
+          failures = []
+          for lang in langs:
+              r = subprocess.run(
+                  ["shaperglot", "check", "fonts/SabasUI-Regular.ttf", lang],
+                  capture_output=True, text=True
+              )
+              if r.returncode != 0:
+                  failures.append(f"{lang}: {r.stdout.strip()[:120]}")
+          if failures:
+              print("SHAPERGLOT GATE: FAILED")
+              for f in failures:
+                  print(f"  {f}")
+              sys.exit(1)
+          print(f"SHAPERGLOT GATE: PASSED ({len(langs)} languages)")
+          EOF
+
+      # ── Gate 8: hb-shape golden regression ─────────────────────────────
+      - name: Gate — hb-shape goldens
+        run: |
+          if command -v hb-shape &>/dev/null; then
+            python tools/ci_hbshape_goldens.py
+          else
+            echo "SKIP: hb-shape not installed (apt install libharfbuzz-bin)"
+            exit 1
+          fi
+
+      - name: Upload font artefacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sabas-fonts
+          path: sabas-fonts/fonts/SabasUI-*.ttf

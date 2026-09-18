@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="rupee" format="2">
+  <advance width="600"/>
+  <unicode hex="20B9"/>
+  <outline>
+    <contour>
+      <point x="65.47619047619048" y="394.67592592592587" type="line"/>
+      <point x="261.9047619047619" y="394.67592592592587" type="line"/>
+      <point x="261.9047619047619" y="50.925925925925924" type="line"/>
+      <point x="65.47619047619048" y="50.925925925925924" type="line"/>
+    </contour>
+    <contour>
+      <point x="65.47619047619048" y="292.8240740740741" type="line"/>
+      <point x="261.9047619047619" y="292.8240740740741" type="line"/>
+      <point x="261.9047619047619" y="50.925925925925924" type="line"/>
+      <point x="65.47619047619048" y="50.925925925925924" type="line"/>
+    </contour>
+    <contour>
+      <point x="65.47619047619048" y="292.8240740740741" type="line"/>
+      <point x="52.38095238095238" y="292.8240740740741" type="line"/>
+      <point x="52.38095238095238" y="165.50925925925927" type="line"/>
+      <point x="65.47619047619048" y="165.50925925925927" type="line"/>
+    </contour>
+    <contour>
+      <point x="65.47619047619048" y="0.0" type="line"/>
+      <point x="52.38095238095238" y="0.0" type="line"/>
+      <point x="52.38095238095238" y="292.8240740740741" type="line"/>
+      <point x="65.47619047619048" y="292.8240740740741" type="line"/>
+    </contour>
+    <contour>
+      <point x="117.85714285714286" y="343.75" type="line"/>
+      <point x="301.1904761904762" y="343.75" type="line"/>
+      <point x="301.1904761904762" y="292.8240740740741" type="line"/>
+      <point x="117.85714285714286" y="292.8240740740741" type="line"/>
+    </contour>
+    <contour>
+      <point x="130.95238095238096" y="292.8240740740741" type="line"/>
+      <point x="301.1904761904762" y="0.0" type="line"/>
+      <point x="248.80952380952382" y="0.0" type="line"/>
+      <point x="91.66666666666667" y="267.3611111111111" type="line"/>
+    </contour>
+  </outline>
+</glyph>

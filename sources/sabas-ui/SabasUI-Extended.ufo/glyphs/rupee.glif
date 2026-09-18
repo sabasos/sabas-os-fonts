@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="rupee" format="2">
+  <advance width="690"/>
+  <unicode hex="20B9"/>
+  <outline>
+    <contour>
+      <point x="114.99999999999999" y="620.0" type="line"/>
+      <point x="459.99999999999994" y="620.0" type="line"/>
+      <point x="459.99999999999994" y="80.0" type="line"/>
+      <point x="114.99999999999999" y="80.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="114.99999999999999" y="460.0" type="line"/>
+      <point x="459.99999999999994" y="460.0" type="line"/>
+      <point x="459.99999999999994" y="80.0" type="line"/>
+      <point x="114.99999999999999" y="80.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="114.99999999999999" y="460.0" type="line"/>
+      <point x="92.0" y="460.0" type="line"/>
+      <point x="92.0" y="260.0" type="line"/>
+      <point x="114.99999999999999" y="260.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="114.99999999999999" y="0.0" type="line"/>
+      <point x="92.0" y="0.0" type="line"/>
+      <point x="92.0" y="460.0" type="line"/>
+      <point x="114.99999999999999" y="460.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="206.99999999999997" y="540.0" type="line"/>
+      <point x="529.0" y="540.0" type="line"/>
+      <point x="529.0" y="460.0" type="line"/>
+      <point x="206.99999999999997" y="460.0" type="line"/>
+    </contour>
+    <contour>
+      <point x="229.99999999999997" y="460.0" type="line"/>
+      <point x="529.0" y="0.0" type="line"/>
+      <point x="436.99999999999994" y="0.0" type="line"/>
+      <point x="161.0" y="420.0" type="line"/>
+    </contour>
+  </outline>
+</glyph>

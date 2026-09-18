@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="periodcentered" format="2">
+  <advance width="277"/>
+  <unicode hex="00B7"/>
+  <outline>
+    <contour>
+      <point x="95.0" y="226.56" type="line"/>
+      <point x="90.0" y="226.56" type="line"/>
+      <point x="90.0" y="84.96" type="line"/>
+      <point x="95.0" y="84.96" type="line"/>
+    </contour>
+  </outline>
+</glyph>

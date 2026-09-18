@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="f.wide2" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="205.09090909090912" y="0.0" type="line"/>
+      <point x="390.6909090909091" y="0.0" type="line"/>
+      <point x="390.6909090909091" y="729.1666666666666" type="line"/>
+      <point x="205.09090909090912" y="729.1666666666666" type="line"/>
+    </contour>
+    <contour>
+      <point x="205.09090909090912" y="729.1666666666666" type="line" smooth="yes"/>
+      <point x="205.09090909090912" y="787.5"/>
+      <point x="390.6909090909091" y="845.8333333333334"/>
+      <point x="584.7272727272726" y="787.5" type="curve"/>
+      <point x="584.7272727272726" y="713.6111111111111" type="line"/>
+      <point x="437.09090909090907" y="752.5"/>
+      <point x="390.6909090909091" y="655.2777777777777"/>
+      <point x="205.09090909090912" y="655.2777777777777" type="curve"/>
+    </contour>
+    <contour>
+      <point x="78.54545454545456" y="488.05555555555554" type="line"/>
+      <point x="605.8181818181818" y="488.05555555555554" type="line"/>
+      <point x="605.8181818181818" y="561.9444444444445" type="line"/>
+      <point x="78.54545454545456" y="561.9444444444445" type="line"/>
+    </contour>
+  </outline>
+</glyph>

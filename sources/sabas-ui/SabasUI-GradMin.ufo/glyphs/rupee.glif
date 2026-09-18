@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="rupee" format="2">
+  <advance width="600"/>
+  <unicode hex="20B9"/>
+  <outline>
+    <contour>
+      <point x="65.9" y="407.96000000000004" type="line"/>
+      <point x="263.6" y="407.96000000000004" type="line"/>
+      <point x="263.6" y="52.64" type="line"/>
+      <point x="65.9" y="52.64" type="line"/>
+    </contour>
+    <contour>
+      <point x="65.9" y="302.68" type="line"/>
+      <point x="263.6" y="302.68" type="line"/>
+      <point x="263.6" y="52.64" type="line"/>
+      <point x="65.9" y="52.64" type="line"/>
+    </contour>
+    <contour>
+      <point x="65.9" y="302.68" type="line"/>
+      <point x="52.72" y="302.68" type="line"/>
+      <point x="52.72" y="171.08" type="line"/>
+      <point x="65.9" y="171.08" type="line"/>
+    </contour>
+    <contour>
+      <point x="65.9" y="0.0" type="line"/>
+      <point x="52.72" y="0.0" type="line"/>
+      <point x="52.72" y="302.68" type="line"/>
+      <point x="65.9" y="302.68" type="line"/>
+    </contour>
+    <contour>
+      <point x="118.62" y="355.32" type="line"/>
+      <point x="303.14" y="355.32" type="line"/>
+      <point x="303.14" y="302.68" type="line"/>
+      <point x="118.62" y="302.68" type="line"/>
+    </contour>
+    <contour>
+      <point x="131.8" y="302.68" type="line"/>
+      <point x="303.14" y="0.0" type="line"/>
+      <point x="250.42000000000002" y="0.0" type="line"/>
+      <point x="92.26" y="276.36" type="line"/>
+    </contour>
+  </outline>
+</glyph>

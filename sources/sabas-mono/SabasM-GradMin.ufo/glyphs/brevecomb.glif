@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="brevecomb" format="2">
+  <advance width="600"/>
+  <unicode hex="0306"/>
+  <outline>
+    <contour>
+      <point x="-52.38095238095238" y="521.9907407407408" type="line"/>
+      <point x="52.38095238095238" y="521.9907407407408" type="line"/>
+      <point x="52.38095238095238" y="570.3703703703703" type="line"/>
+      <point x="-52.38095238095238" y="570.3703703703703" type="line"/>
+    </contour>
+  </outline>
+</glyph>

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>ascender</key>
+    <integer>800</integer>
+    <key>capHeight</key>
+    <integer>720</integer>
+    <key>copyright</key>
+    <string>Copyright 2026 Sabas OS Contributors</string>
+    <key>descender</key>
+    <integer>-200</integer>
+    <key>familyName</key>
+    <string>Sabas UI</string>
+    <key>openTypeNamePreferredFamilyName</key>
+    <string>Sabas UI</string>
+    <key>openTypeNamePreferredSubfamilyName</key>
+    <string>Regular</string>
+    <key>openTypeOS2Selection</key>
+    <array>
+      <integer>7</integer>
+    </array>
+    <key>openTypeOS2Type</key>
+    <array/>
+    <key>openTypeOS2TypoAscender</key>
+    <integer>800</integer>
+    <key>openTypeOS2TypoDescender</key>
+    <integer>-200</integer>
+    <key>openTypeOS2TypoLineGap</key>
+    <integer>200</integer>
+    <key>openTypeOS2VendorID</key>
+    <string>SBAS</string>
+    <key>openTypeOS2WeightClass</key>
+    <integer>500</integer>
+    <key>openTypeOS2WinAscent</key>
+    <integer>1010</integer>
+    <key>openTypeOS2WinDescent</key>
+    <integer>300</integer>
+    <key>postscriptBlueFuzz</key>
+    <integer>1</integer>
+    <key>postscriptBlueScale</key>
+    <real>0.0</real>
+    <key>postscriptBlueValues</key>
+    <array>
+      <integer>-17</integer>
+      <integer>0</integer>
+      <integer>596</integer>
+      <integer>614</integer>
+      <integer>807</integer>
+      <integer>818</integer>
+      <integer>841</integer>
+      <integer>852</integer>
+    </array>
+    <key>postscriptFontName</key>
+    <string>SabasUI-Regular</string>
+    <key>postscriptOtherBlues</key>
+    <array>
+      <integer>-215</integer>
+      <integer>-205</integer>
+    </array>
+    <key>styleName</key>
+    <string>Medium</string>
+    <key>unitsPerEm</key>
+    <integer>1000</integer>
+    <key>xHeight</key>
+    <integer>540</integer>
+  </dict>
+</plist>

@@ -1,0 +1,10 @@
+fonts/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+*.otf
+*.ttf
+*.woff
+*.woff2

@@ -1,0 +1,22 @@
+# _shared/kern.fea
+# Kerning feature (§10).
+# Kern pairs are class-based and live in each master's kerning.plist, grouped by
+# the public.kern1/public.kern2 groups in the same UFO. ufo2ft's kern feature
+# writer turns those into GPOS at compile time.
+#
+# The "# Automatic Code" line below is that writer's insertion marker, and it is
+# load-bearing: without it ufo2ft decides the feature is hand-maintained and
+# *drops the UFO's kerning entirely* ("font has kerning, but also manually
+# written kerning features without an insertion comment"). This file used to hold
+# 27 hand-written pairs and no marker, so every pair in kerning.plist was being
+# thrown away in favour of that shorter list. The pairs it had that the class
+# table lacked — L before T/V/W/Y, and f before i — moved into KERN_PAIRS in
+# tools/strike/build_t1_glyphs.py.
+#
+# Add manual exceptions below the marker, never above it, and never re-state a
+# pair the class table already covers: both lookups would apply and the kern
+# would be taken twice.
+
+feature kern {
+    # Automatic Code
+} kern;

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="bar.wide2" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="95.31428571428573" y="0.0" type="line"/>
+      <point x="204.68571428571425" y="0.0" type="line"/>
+      <point x="204.68571428571425" y="350.0" type="line"/>
+      <point x="95.31428571428573" y="350.0" type="line"/>
+    </contour>
+  </outline>
+</glyph>

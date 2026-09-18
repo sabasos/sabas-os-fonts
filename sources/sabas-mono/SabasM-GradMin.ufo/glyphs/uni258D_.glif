@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni258D" format="2">
+  <advance width="600"/>
+  <unicode hex="258D"/>
+  <outline>
+    <contour>
+      <point x="196.42857142857142" y="-130.95238095238096" type="line"/>
+      <point x="392.85714285714283" y="-130.95238095238096" type="line"/>
+      <point x="392.85714285714283" y="523.8095238095239" type="line"/>
+      <point x="196.42857142857142" y="523.8095238095239" type="line"/>
+    </contour>
+  </outline>
+</glyph>

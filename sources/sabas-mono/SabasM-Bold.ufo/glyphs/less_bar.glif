@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="less_bar" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="94.28571428571428" y="565.7142857142857" type="line"/>
+      <point x="848.5714285714286" y="565.7142857142857" type="line"/>
+      <point x="848.5714285714286" y="660.0" type="line"/>
+      <point x="94.28571428571428" y="660.0" type="line"/>
+    </contour>
+  </outline>
+</glyph>

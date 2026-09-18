@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SabasUI.designspace — M2 complete
+  §5.1 registered axes: wght wdth opsz GRAD slnt
+  §5.2 parametric axes (avar2 inputs, hidden): XOPQ YOPQ XTRA YTLC YTUC
+  Weight masters: Thin(100) Light(300) Regular(400) Medium(500) SemiBold(600) Bold(700) ExtraBold(800) Black(900)
+  Parametric masters: Condensed(wdth=75) Extended(wdth=125) Caption(opsz=10) Display(opsz=32)
+                      GradMin(GRAD=-200) GradMax(GRAD=150) Oblique(slnt=-10)
+-->
+<designspace format="5.1">
+
+  <!-- ── Registered axes ──────────────────────────────────────────────── -->
+  <axes>
+    <axis tag="wght" name="Weight"       minimum="100"  default="400"  maximum="1000"/>
+    <axis tag="wdth" name="Width"        minimum="75"   default="100"  maximum="125"/>
+    <axis tag="opsz" name="Optical Size" minimum="10"   default="16"   maximum="32"/>
+    <axis tag="GRAD" name="Grade"        minimum="-200" default="0"    maximum="150"/>
+    <axis tag="slnt" name="Slant"        minimum="-10"  default="0"    maximum="0"/>
+
+    <!-- ── Parametric axes (hidden, avar2 inputs) §5.2 ──────────────── -->
+    <axis tag="XOPQ" name="X Opaque"          minimum="20"   default="88"  maximum="200" hidden="1"/>
+    <axis tag="YOPQ" name="Y Opaque"          minimum="17"   default="76"  maximum="172" hidden="1"/>
+    <axis tag="XTRA" name="X Transparent"     minimum="-100" default="0"   maximum="100" hidden="1"/>
+    <axis tag="YTLC" name="Y Transparent LC"  minimum="460"  default="540" maximum="580" hidden="1"/>
+    <axis tag="YTUC" name="Y Transparent UC"  minimum="640"  default="720" maximum="760" hidden="1"/>
+
+    <!-- ── avar2 mappings §5.2 ──────────────────────────────────────── -->
+    <mappings>
+      <!-- wght → XOPQ (primary), YOPQ (×0.86), XTRA (negative at heavy) -->
+      <mapping>
+        <input><dimension name="Weight" xvalue="100"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="20"/>
+          <dimension name="Y Opaque" xvalue="17"/>
+          <dimension name="X Transparent" xvalue="30"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Weight" xvalue="400"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="88"/>
+          <dimension name="Y Opaque" xvalue="76"/>
+          <dimension name="X Transparent" xvalue="0"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Weight" xvalue="1000"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="200"/>
+          <dimension name="Y Opaque" xvalue="172"/>
+          <dimension name="X Transparent" xvalue="-60"/>
+        </output>
+      </mapping>
+
+      <!-- GRAD → XOPQ+YOPQ, XTRA compensates (advance-neutral) -->
+      <mapping>
+        <input><dimension name="Grade" xvalue="-200"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="-30"/>
+          <dimension name="Y Opaque" xvalue="-26"/>
+          <dimension name="X Transparent" xvalue="30"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Grade" xvalue="150"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="22"/>
+          <dimension name="Y Opaque" xvalue="19"/>
+          <dimension name="X Transparent" xvalue="-22"/>
+        </output>
+      </mapping>
+
+      <!-- opsz → YTLC (inverse), XTRA, YOPQ -->
+      <mapping>
+        <input><dimension name="Optical Size" xvalue="10"/></input>
+        <output>
+          <dimension name="Y Transparent LC" xvalue="570"/>
+          <dimension name="X Transparent" xvalue="20"/>
+          <dimension name="Y Opaque" xvalue="-8"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Optical Size" xvalue="32"/></input>
+        <output>
+          <dimension name="Y Transparent LC" xvalue="510"/>
+          <dimension name="X Transparent" xvalue="-10"/>
+          <dimension name="Y Opaque" xvalue="6"/>
+        </output>
+      </mapping>
+
+      <!-- wdth → XTRA with small XOPQ correction -->
+      <mapping>
+        <input><dimension name="Width" xvalue="75"/></input>
+        <output>
+          <dimension name="X Transparent" xvalue="-80"/>
+          <dimension name="X Opaque" xvalue="-8"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Width" xvalue="125"/></input>
+        <output>
+          <dimension name="X Transparent" xvalue="80"/>
+          <dimension name="X Opaque" xvalue="4"/>
+        </output>
+      </mapping>
+    </mappings>
+  </axes>
+
+  <!-- ── Masters ──────────────────────────────────────────────────────── -->
+  <sources>
+    <!-- Weight axis masters (registered wght axis) -->
+    <source filename="SabasUI-Thin.ufo"      familyname="Sabas UI" stylename="Thin">
+      <location><dimension name="Weight" xvalue="100"/></location>
+    </source>
+    <source filename="SabasUI-Light.ufo"     familyname="Sabas UI" stylename="Light">
+      <location><dimension name="Weight" xvalue="300"/></location>
+    </source>
+    <source filename="SabasUI-Regular.ufo"   familyname="Sabas UI" stylename="Regular">
+      <location><dimension name="Weight" xvalue="400"/></location>
+    </source>
+    <source filename="SabasUI-Medium.ufo"    familyname="Sabas UI" stylename="Medium">
+      <location><dimension name="Weight" xvalue="500"/></location>
+    </source>
+    <source filename="SabasUI-SemiBold.ufo"  familyname="Sabas UI" stylename="SemiBold">
+      <location><dimension name="Weight" xvalue="600"/></location>
+    </source>
+    <source filename="SabasUI-Bold.ufo"      familyname="Sabas UI" stylename="Bold">
+      <location><dimension name="Weight" xvalue="700"/></location>
+    </source>
+    <source filename="SabasUI-ExtraBold.ufo" familyname="Sabas UI" stylename="ExtraBold">
+      <location><dimension name="Weight" xvalue="800"/></location>
+    </source>
+    <source filename="SabasUI-Black.ufo"     familyname="Sabas UI" stylename="Black">
+      <location><dimension name="Weight" xvalue="900"/></location>
+    </source>
+
+    <!--
+      §5.2 parametric masters: placed at parametric axis extremes so gvar
+      accumulates real deltas on XOPQ/YOPQ/XTRA/YTLC/YTUC.
+      avar2 maps registered → parametric; these masters supply the geometry.
+    -->
+
+    <!-- XTRA extremes (wdth-driven via avar2) -->
+    <source filename="SabasUI-Condensed.ufo" familyname="Sabas UI" stylename="Condensed">
+      <location>
+        <dimension name="Weight"        xvalue="400"/>
+        <dimension name="X Transparent" xvalue="-100"/>
+        <dimension name="X Opaque"      xvalue="80"/>
+      </location>
+    </source>
+    <source filename="SabasUI-Extended.ufo"  familyname="Sabas UI" stylename="Extended">
+      <location>
+        <dimension name="Weight"        xvalue="400"/>
+        <dimension name="X Transparent" xvalue="100"/>
+        <dimension name="X Opaque"      xvalue="92"/>
+      </location>
+    </source>
+
+    <!-- YTLC extremes (opsz-driven via avar2) -->
+    <source filename="SabasUI-Caption.ufo"   familyname="Sabas UI" stylename="Caption">
+      <location>
+        <dimension name="Weight"           xvalue="400"/>
+        <dimension name="Y Transparent LC" xvalue="580"/>
+        <dimension name="X Transparent"    xvalue="20"/>
+        <dimension name="Y Opaque"         xvalue="68"/>
+      </location>
+    </source>
+    <source filename="SabasUI-Display.ufo"   familyname="Sabas UI" stylename="Display">
+      <location>
+        <dimension name="Weight"           xvalue="400"/>
+        <dimension name="Y Transparent LC" xvalue="460"/>
+        <dimension name="X Transparent"    xvalue="-10"/>
+        <dimension name="Y Opaque"         xvalue="82"/>
+      </location>
+    </source>
+
+    <!-- XOPQ/YOPQ extremes (GRAD-driven via avar2) -->
+    <source filename="SabasUI-GradMin.ufo"   familyname="Sabas UI" stylename="GradMin">
+      <location>
+        <dimension name="Weight"        xvalue="400"/>
+        <dimension name="X Opaque"      xvalue="20"/>
+        <dimension name="Y Opaque"      xvalue="17"/>
+        <dimension name="X Transparent" xvalue="30"/>
+      </location>
+    </source>
+    <source filename="SabasUI-GradMax.ufo"   familyname="Sabas UI" stylename="GradMax">
+      <location>
+        <dimension name="Weight"        xvalue="400"/>
+        <dimension name="X Opaque"      xvalue="200"/>
+        <dimension name="Y Opaque"      xvalue="172"/>
+        <dimension name="X Transparent" xvalue="-60"/>
+      </location>
+    </source>
+
+    <!-- slnt master (registered axis, no parametric mapping needed) -->
+    <source filename="SabasUI-Oblique.ufo"   familyname="Sabas UI" stylename="Oblique">
+      <location>
+        <dimension name="Weight" xvalue="400"/>
+        <dimension name="Slant"  xvalue="-10"/>
+      </location>
+    </source>
+  </sources>
+
+  <!-- ── Named instances (§4.1: quadratic TTF statics) ───────────────── -->
+  <instances>
+    <instance familyname="Sabas UI" stylename="Thin"
+              filename="../../fonts/SabasUI-Thin.ttf" name="Sabas UI Thin">
+      <location><dimension name="Weight" xvalue="100"/></location>
+    </instance>
+    <instance familyname="Sabas UI" stylename="Light"
+              filename="../../fonts/SabasUI-Light.ttf" name="Sabas UI Light">
+      <location><dimension name="Weight" xvalue="300"/></location>
+    </instance>
+    <instance familyname="Sabas UI" stylename="Regular"
+              filename="../../fonts/SabasUI-Regular.ttf" name="Sabas UI Regular">
+      <location><dimension name="Weight" xvalue="400"/></location>
+    </instance>
+    <instance familyname="Sabas UI" stylename="Medium"
+              filename="../../fonts/SabasUI-Medium.ttf" name="Sabas UI Medium">
+      <location><dimension name="Weight" xvalue="500"/></location>
+    </instance>
+    <instance familyname="Sabas UI" stylename="SemiBold"
+              filename="../../fonts/SabasUI-SemiBold.ttf" name="Sabas UI SemiBold">
+      <location><dimension name="Weight" xvalue="600"/></location>
+    </instance>
+    <instance familyname="Sabas UI" stylename="Bold"
+              filename="../../fonts/SabasUI-Bold.ttf" name="Sabas UI Bold">
+      <location><dimension name="Weight" xvalue="700"/></location>
+    </instance>
+    <instance familyname="Sabas UI" stylename="ExtraBold"
+              filename="../../fonts/SabasUI-ExtraBold.ttf" name="Sabas UI ExtraBold">
+      <location><dimension name="Weight" xvalue="800"/></location>
+    </instance>
+    <instance familyname="Sabas UI" stylename="Black"
+              filename="../../fonts/SabasUI-Black.ttf" name="Sabas UI Black">
+      <location><dimension name="Weight" xvalue="900"/></location>
+    </instance>
+  </instances>
+
+</designspace>

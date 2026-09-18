@@ -1,0 +1,11 @@
+format 1
+family      sabas-ui
+glyph       n
+ppem        12
+weight      600
+baseline    sha256:eb124f3432a48cfa
+raster-env  freetype-2.13.3 target=light interp=40 darken=on
+bbox        0 0 8 9
+advance     8
+
+# x  y   from ->  to      8-bit coverage

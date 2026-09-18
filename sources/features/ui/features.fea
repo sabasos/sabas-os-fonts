@@ -1,0 +1,54 @@
+# ui/features.fea
+# Sabas UI OpenType layout features (§8, §10).
+# Included by each UI master UFO's features.fea via:
+#   include(../features/ui/features.fea);
+
+# ufo2ft gives feaLib a single include directory — the UFO's parent, i.e.
+# sources/<family>/ — and resolves *every* include against it, not against the
+# file doing the including. So these two are written from sources/<family>/ as
+# well, the same as the include on line 4, rather than relative to this file.
+include(../features/_shared/mark_classes.fea);
+include(../features/_shared/kern.fea);
+
+# ── locl: locale-specific glyph substitutions (§8) ──────────────────────────
+feature locl {
+    # Romanian: s-comma-below, t-comma-below (not cedilla)
+    script latn;
+    language ROM  include_dflt;
+        sub scedilla by scommaaccent;
+        sub tcedilla by tcommaaccent;
+    language MOL  include_dflt;
+        sub scedilla by scommaaccent;
+        sub tcedilla by tcommaaccent;
+
+    # Serbian/Macedonian: italic forms of б, г, д, п, т
+    # (Latin script block; Cyrillic handled separately when Cyrillic added)
+    script latn;
+    language SRB  include_dflt;
+    language MKD  include_dflt;
+
+    # Turkish: dotless i for uppercase I
+    script latn;
+    language TRK  include_dflt;
+        sub I by I;   # placeholder — dotlessi substitution handled by case feature
+} locl;
+
+# ── mark / mkmk: mark attachment and stacking (§8) ───────────────────────────
+# Deliberately absent. ufo2ft writes both features itself from the anchors in the
+# UFO, and it appends its generated rules to whatever is here rather than
+# replacing it. The placeholder blocks that used to sit here declared @MarkAbove
+# over the same glyphs twice — once in mark, once in mkmk — which is a hard
+# "glyph already defined" error, and their <anchor 0 0> rules would have pinned
+# every diacritic to the origin if it had compiled. Anchors, not FEA, is where
+# this belongs.
+
+# ── calt: contextual alternates (§8) ─────────────────────────────────────────
+# UI calt is minimal — primarily for figure spacing and currency alignment.
+# Mono calt (texture healing) is in sources/features/mono/calt_healing.fea.
+feature calt {
+    lookup calt_ui {
+        lookupflag 0;
+        # Placeholder: no UI-specific contextual substitutions yet.
+        # Add rules here as design requires (e.g. alternate ampersand in display).
+    } calt_ui;
+} calt;

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SabasM.designspace — Sabas Mono M3
+  §5.1: wght 200–800/400, opsz 9–24/13, GRAD −200…150, slnt 0…−9
+  §5.2: parametric axes XOPQ YOPQ XTRA (no YTLC/YTUC — mono grid is fixed)
+  No kern table (§8). Fixed 600-unit advance throughout.
+-->
+<designspace format="5.1">
+
+  <axes>
+    <axis tag="wght" name="Weight"       minimum="200"  default="400"  maximum="800"/>
+    <axis tag="opsz" name="Optical Size" minimum="9"    default="13"   maximum="24"/>
+    <axis tag="GRAD" name="Grade"        minimum="-200" default="0"    maximum="150"/>
+    <axis tag="slnt" name="Slant"        minimum="-9"   default="0"    maximum="0"/>
+
+    <axis tag="XOPQ" name="X Opaque"      minimum="30"   default="84"  maximum="180" hidden="1"/>
+    <axis tag="YOPQ" name="Y Opaque"      minimum="26"   default="72"  maximum="154" hidden="1"/>
+    <axis tag="XTRA" name="X Transparent" minimum="-60"  default="0"   maximum="60"  hidden="1"/>
+
+    <mappings>
+      <mapping>
+        <input><dimension name="Weight" xvalue="200"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="30"/>
+          <dimension name="Y Opaque" xvalue="26"/>
+          <dimension name="X Transparent" xvalue="20"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Weight" xvalue="400"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="84"/>
+          <dimension name="Y Opaque" xvalue="72"/>
+          <dimension name="X Transparent" xvalue="0"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Weight" xvalue="800"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="180"/>
+          <dimension name="Y Opaque" xvalue="154"/>
+          <dimension name="X Transparent" xvalue="-40"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Grade" xvalue="-200"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="-30"/>
+          <dimension name="Y Opaque" xvalue="-26"/>
+          <dimension name="X Transparent" xvalue="30"/>
+        </output>
+      </mapping>
+      <mapping>
+        <input><dimension name="Grade" xvalue="150"/></input>
+        <output>
+          <dimension name="X Opaque" xvalue="22"/>
+          <dimension name="Y Opaque" xvalue="19"/>
+          <dimension name="X Transparent" xvalue="-22"/>
+        </output>
+      </mapping>
+    </mappings>
+  </axes>
+
+  <sources>
+    <source filename="SabasM-Light.ufo"   familyname="Sabas Mono" stylename="Light">
+      <location><dimension name="Weight" xvalue="200"/></location>
+    </source>
+    <source filename="SabasM-Regular.ufo" familyname="Sabas Mono" stylename="Regular">
+      <location><dimension name="Weight" xvalue="400"/></location>
+    </source>
+    <source filename="SabasM-Bold.ufo"    familyname="Sabas Mono" stylename="Bold">
+      <location><dimension name="Weight" xvalue="700"/></location>
+    </source>
+    <source filename="SabasM-GradMin.ufo" familyname="Sabas Mono" stylename="GradMin">
+      <location>
+        <dimension name="Weight" xvalue="400"/>
+        <dimension name="Grade"  xvalue="-200"/>
+      </location>
+    </source>
+    <source filename="SabasM-GradMax.ufo" familyname="Sabas Mono" stylename="GradMax">
+      <location>
+        <dimension name="Weight" xvalue="400"/>
+        <dimension name="Grade"  xvalue="150"/>
+      </location>
+    </source>
+    <source filename="SabasM-Oblique.ufo" familyname="Sabas Mono" stylename="Oblique">
+      <location>
+        <dimension name="Weight" xvalue="400"/>
+        <dimension name="Slant"  xvalue="-9"/>
+      </location>
+    </source>
+  </sources>
+
+  <instances>
+    <instance familyname="Sabas Mono" stylename="Light"
+              filename="../../fonts/SabasM-Light.otf" name="Sabas Mono Light">
+      <location><dimension name="Weight" xvalue="200"/></location>
+    </instance>
+    <instance familyname="Sabas Mono" stylename="Regular"
+              filename="../../fonts/SabasM-Regular.otf" name="Sabas Mono Regular">
+      <location><dimension name="Weight" xvalue="400"/></location>
+    </instance>
+    <instance familyname="Sabas Mono" stylename="Bold"
+              filename="../../fonts/SabasM-Bold.otf" name="Sabas Mono Bold">
+      <location><dimension name="Weight" xvalue="700"/></location>
+    </instance>
+  </instances>
+
+</designspace>

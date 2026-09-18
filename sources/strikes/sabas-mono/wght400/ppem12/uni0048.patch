@@ -1,0 +1,11 @@
+format 1
+family      sabas-mono
+glyph       uni0048
+ppem        12
+weight      400
+baseline    sha256:1b48e023df53029a
+raster-env  freetype-2.13.3 target=light interp=40 darken=on
+bbox        0 0 7 8
+advance     7
+
+# x  y   from ->  to      8-bit coverage

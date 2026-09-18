@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="dotlessi" format="2">
+  <advance width="600"/>
+  <unicode hex="0131"/>
+  <outline>
+    <contour>
+      <point x="107.14285714285714" y="0.0" type="line"/>
+      <point x="85.71428571428571" y="0.0" type="line"/>
+      <point x="85.71428571428571" y="262.5" type="line"/>
+      <point x="107.14285714285714" y="262.5" type="line"/>
+    </contour>
+  </outline>
+</glyph>

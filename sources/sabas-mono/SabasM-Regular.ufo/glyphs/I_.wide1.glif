@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="I.wide1" format="2">
+  <advance width="600"/>
+  <outline>
+    <contour>
+      <point x="198.17142857142858" y="0.0" type="line"/>
+      <point x="401.8285714285714" y="0.0" type="line"/>
+      <point x="401.8285714285714" y="700.0" type="line"/>
+      <point x="198.17142857142858" y="700.0" type="line"/>
+    </contour>
+  </outline>
+</glyph>

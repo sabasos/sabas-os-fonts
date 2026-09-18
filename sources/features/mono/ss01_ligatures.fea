@@ -1,0 +1,55 @@
+# Sabas Mono - ss01 programming ligatures (opt-in only, never liga)
+# §8: Mono ligatures are ss01, never liga.
+# calt must BREAK ligation across token boundaries (e.g. ---> = -- + ->).
+# No kern table in Mono.
+
+# ── Ligature glyphs ───────────────────────────────────────────────────────────
+# Each ligature is a single glyph at 600 units (fixed advance preserved).
+
+lookup ligs_ss01 {
+    # Arrows
+    sub hyphen hyphen greater by arrowdblright;       # -->
+    sub equal greater by arrowright_eq;               # =>
+    sub less equal by arrowleft_eq;                   # <=
+    sub greater equal by greaterequal_lig;            # >=
+    sub less hyphen greater by arrowleftright;        # <->
+    sub bar greater by bar_greater;                   # |>
+    sub less bar by less_bar;                         # <|
+    # Equality / inequality
+    sub exclam equal by notequal;                     # !=
+    sub exclam equal equal by notequal_strict;        # !==
+    sub equal equal by equal_equal;                   # ==
+    sub equal equal equal by equal_strict;            # ===
+    # Colons / scope
+    sub colon colon by coloncolon;                    # ::
+    sub colon colon equal by coloncolon_eq;           # ::=
+    # Comments
+    sub slash slash by slashslash;                    # //
+    sub slash asterisk by slashasterisk;              # /*
+    sub asterisk slash by asteriskslash;              # */
+    # Exponentiation / bold
+    sub asterisk asterisk by asteriskasterisk;        # **
+    # Pipe
+    sub bar bar by barbar;                            # ||
+    sub ampersand ampersand by ampersandampersand;    # &&
+} ligs_ss01;
+
+# ── Token-boundary breaker (calt, runs before healing) ───────────────────────
+# Prevents ---> from becoming -- + -> by blocking the -> ligature
+# when preceded by a hyphen that is itself part of a longer run.
+# Implemented as a contextual chaining rule that substitutes the
+# second hyphen with hyphen.nolig to block the -> lookup.
+
+lookup break_arrow_chain {
+    # hyphen hyphen hyphen: mark middle hyphen as no-lig to prevent --> consuming it
+    sub hyphen hyphen' hyphen by hyphen.nolig;
+} break_arrow_chain;
+
+feature ss01 {
+    lookup ligs_ss01;
+} ss01;
+
+# The break lookup runs in calt BEFORE healing, AFTER ss01
+feature calt {
+    lookup break_arrow_chain;
+} calt;
