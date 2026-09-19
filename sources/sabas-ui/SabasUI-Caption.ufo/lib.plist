@@ -2,8 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
-    <key>co.sabas.axis.opsz</key>
-    <integer>10</integer>
+    <key>co.sabas.parametric.location</key>
+    <dict>
+      <key>X Transparent</key>
+      <integer>20</integer>
+      <key>Y Opaque</key>
+      <integer>68</integer>
+      <key>Y Transparent LC</key>
+      <integer>580</integer>
+    </dict>
     <key>public.glyphOrder</key>
     <array>
       <string>.notdef</string>
@@ -328,6 +335,53 @@
       <string>wacute</string>
       <string>Wdieresis</string>
       <string>wdieresis</string>
+      <string>Ccircumflex</string>
+      <string>Ebreve</string>
+      <string>Eng</string>
+      <string>Gcircumflex</string>
+      <string>Hcircumflex</string>
+      <string>IJ</string>
+      <string>Ibreve</string>
+      <string>Itilde</string>
+      <string>Jcircumflex</string>
+      <string>Ldotaccent</string>
+      <string>Obreve</string>
+      <string>Ohorn</string>
+      <string>Omacron</string>
+      <string>Rcommaaccent</string>
+      <string>Scircumflex</string>
+      <string>Tbar</string>
+      <string>Ubreve</string>
+      <string>Uhorn</string>
+      <string>Utilde</string>
+      <string>ccircumflex</string>
+      <string>dotbelowcomb</string>
+      <string>ebreve</string>
+      <string>eng</string>
+      <string>gcircumflex</string>
+      <string>hcircumflex</string>
+      <string>hookabovecomb</string>
+      <string>horncomb</string>
+      <string>ibreve</string>
+      <string>ij</string>
+      <string>itilde</string>
+      <string>jcircumflex</string>
+      <string>kgreenlandic</string>
+      <string>ldotaccent</string>
+      <string>longs</string>
+      <string>napostrophe</string>
+      <string>obreve</string>
+      <string>ohorn</string>
+      <string>omacron</string>
+      <string>rcommaaccent</string>
+      <string>scircumflex</string>
+      <string>tbar</string>
+      <string>ubreve</string>
+      <string>uhorn</string>
+      <string>utilde</string>
+      <string>a.ss01</string>
+      <string>Tcedilla</string>
+      <string>tcedilla</string>
     </array>
   </dict>
 </plist>

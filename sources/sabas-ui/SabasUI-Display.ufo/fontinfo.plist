@@ -40,21 +40,21 @@
     <real>0.039625</real>
     <key>postscriptBlueValues</key>
     <array>
-      <integer>-14</integer>
+      <integer>-13</integer>
       <integer>0</integer>
-      <integer>496</integer>
-      <integer>510</integer>
-      <integer>670</integer>
-      <integer>680</integer>
-      <integer>699</integer>
-      <integer>708</integer>
+      <integer>447</integer>
+      <integer>460</integer>
+      <integer>605</integer>
+      <integer>613</integer>
+      <integer>630</integer>
+      <integer>639</integer>
     </array>
     <key>postscriptFontName</key>
     <string>SabasUI-Regular</string>
     <key>postscriptOtherBlues</key>
     <array>
-      <integer>-203</integer>
-      <integer>-194</integer>
+      <integer>-183</integer>
+      <integer>-175</integer>
     </array>
     <key>styleName</key>
     <string>Display</string>

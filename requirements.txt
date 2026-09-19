@@ -11,6 +11,7 @@ cu2qu>=1.6
 # at it.
 uharfbuzz>=0.40
 pillow>=10.0
+pypng>=0.20
 # §12.1: fontc is the shipped compiler. Install via cargo:
 #   cargo install fontc
 # or download a release binary and add to PATH.

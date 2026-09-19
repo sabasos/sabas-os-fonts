@@ -17,15 +17,35 @@ mkdir -p fonts
 # ── §12.1: fontc is the shipped artefact; fontmake is the fallback referee ───
 if command -v fontc &>/dev/null; then
   echo "=== Compiling VF with fontc (§12.1 shipped artefact) ==="
-  fontc sources/sabas-ui/SabasUI.designspace -o fonts/
+  fontc sources/sabas-ui/SabasUI.designspace -o fonts/SabasUI-VF.ttf
 
   echo ""
   echo "=== Generating TTF statics from VF (quadratic glyf, §4.1) ==="
-  fontmake -i \
-           --ttf-curves \
-           -m fonts/SabasUI-VF.ttf \
-           --output-dir fonts/ \
-           --verbose
+  python - <<'PYEOF'
+import sys
+from fontTools.ttLib import TTFont
+from fontTools.varLib.instancer import instantiateVariableFont, OverlapMode
+
+vf_path = 'fonts/SabasUI-VF.ttf'
+vf = TTFont(vf_path)
+fvar = vf['fvar']
+axes = {a.axisTag: a for a in fvar.axes}
+
+for inst in fvar.instances:
+    name = vf['name'].getDebugName(inst.subfamilyNameID) or f'instance_{inst.subfamilyNameID}'
+    loc = {tag: val for tag, val in inst.coordinates.items()}
+    print(f'  Instantiating {name} ...')
+    out = instantiateVariableFont(
+        TTFont(vf_path),
+        loc,
+        inplace=True,
+        overlap=OverlapMode.KEEP_AND_DONT_SET_FLAGS,
+    )
+    safe = name.replace(' ', '')
+    out_path = f'fonts/SabasUI-{safe}.ttf'
+    out.save(out_path)
+    print(f'    -> {out_path}')
+PYEOF
 else
   echo "WARNING: fontc not found — falling back to fontmake only (§12.1 not satisfied)."
   echo "Install fontc: cargo install fontc"
@@ -34,12 +54,12 @@ else
   fontmake -m sources/sabas-ui/SabasUI.designspace \
            -o variable \
            --output-path fonts/SabasUI-VF.ttf \
-           --verbose
+           --verbose WARNING
   fontmake -i \
-           --ttf-curves \
+           --ttf-curves cu2qu \
            -m fonts/SabasUI-VF.ttf \
            --output-dir fonts/ \
-           --verbose
+           --verbose WARNING
 fi
 
 echo ""

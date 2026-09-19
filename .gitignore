@@ -1,12 +1,25 @@
+# Build output
 fonts/
-venv/
+
+# Generated glyph files (output of build_t1_glyphs.py, build_weight_masters.py, etc.)
+# UFO metadata (fontinfo.plist, kerning.plist, features.fea, etc.) is NOT generated — keep tracked.
+sources/sabas-ui/*/glyphs/
+sources/sabas-mono/*/glyphs/
+
+# Python
+.venv/
 __pycache__/
 *.pyc
 *.pyo
+*.egg-info/
+.eggs/
+
+# Strike pipeline working directories
+/tmp/sabas-strikes-*/
+
+# Rust / cargo (fontc build cache)
+.cargo/
+
+# OS
 .DS_Store
-*.otf
-*.ttf
-*.woff
-*.woff2
-SABAS-DESIGN-BRIEF.md
-SABAS-FONT-HANDOVER.md
+Thumbs.db

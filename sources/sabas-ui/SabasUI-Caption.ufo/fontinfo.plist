@@ -42,19 +42,19 @@
     <array>
       <integer>-16</integer>
       <integer>0</integer>
-      <integer>554</integer>
-      <integer>570</integer>
-      <integer>750</integer>
-      <integer>760</integer>
-      <integer>781</integer>
-      <integer>792</integer>
+      <integer>564</integer>
+      <integer>580</integer>
+      <integer>763</integer>
+      <integer>773</integer>
+      <integer>795</integer>
+      <integer>806</integer>
     </array>
     <key>postscriptFontName</key>
     <string>SabasUI-Regular</string>
     <key>postscriptOtherBlues</key>
     <array>
-      <integer>-227</integer>
-      <integer>-216</integer>
+      <integer>-231</integer>
+      <integer>-220</integer>
     </array>
     <key>styleName</key>
     <string>Caption</string>
