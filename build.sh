@@ -41,7 +41,7 @@ for inst in fvar.instances:
         TTFont(vf_path),
         loc,
         inplace=True,
-        overlap=OverlapMode.KEEP_AND_DONT_SET_FLAGS,
+        overlap=OverlapMode.REMOVE,
     )
     safe = name.replace(' ', '')
     out_path = f'fonts/SabasUI-{safe}.ttf'

@@ -6,7 +6,8 @@ from fontTools.otlLib.builder import buildStatTable
 from fontTools.ttLib import TTFont
 
 sys.path.insert(0, str(Path(__file__).parent))
-from post_build_fixup import add_gasp, fix_hhea
+from font_identity import apply_identity
+from post_build_fixup import add_gasp, add_prep, fix_hhea, fix_ribbi, select_for_static, strip_mac_names
 
 AXES = [
     dict(tag="wght", name="Weight", values=[
@@ -22,9 +23,9 @@ AXES = [
         dict(nominalValue=-9, name="Oblique", rangeMinValue=-9, rangeMaxValue=-2),
     ]),
     dict(tag="GRAD", name="Grade", values=[
-        dict(nominalValue=-200, name="GradMin",  rangeMinValue=-200, rangeMaxValue=-100),
+        dict(nominalValue=-200, name="GradMin",  rangeMinValue=-200, rangeMaxValue=-100, flags=0x2),
         dict(nominalValue=0,    name="GradNorm", rangeMinValue=-100, rangeMaxValue=75, flags=0x2),
-        dict(nominalValue=150,  name="GradMax",  rangeMinValue=75,   rangeMaxValue=150),
+        dict(nominalValue=150,  name="GradMax",  rangeMinValue=75,   rangeMaxValue=150, flags=0x2),
     ]),
 ]
 
@@ -34,7 +35,12 @@ def main():
         font = TTFont(str(p))
         fix_hhea(font)
         add_gasp(font)
-        buildStatTable(font, AXES)
+        add_prep(font)
+        fix_ribbi(font)
+        axes = AXES if "fvar" in font else select_for_static(AXES, font["OS/2"].usWeightClass)
+        buildStatTable(font, axes)
+        strip_mac_names(font)
+        apply_identity(font)
         font.save(str(p))
         print(f"  {p.name}: hhea={font['hhea'].ascent}/{font['hhea'].descent}/{font['hhea'].lineGap}")
 

@@ -93,8 +93,14 @@ feature ordn {
 
 include(../features/ui/alternates.fea);
 
-feature ss02 { sub l by l.ss02; } ss02;
-feature ss03 { sub three by three.ss03; } ss03;
+feature ss02 {
+    featureNames { name "Straight-tail l"; };
+    sub l by l.ss02;
+} ss02;
+feature ss03 {
+    featureNames { name "Flat-top 3"; };
+    sub three by three.ss03;
+} ss03;
 feature cv01 { sub zero by zero.cv01; } cv01;
 feature cv02 { sub four by four.cv02; } cv02;
 

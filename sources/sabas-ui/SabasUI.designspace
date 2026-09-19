@@ -151,16 +151,16 @@
     <instance familyname="Sabas UI" stylename="Ultra Oblique" name="Sabas UI Ultra Oblique">
       <location><dimension name="Weight" xvalue="1000"/><dimension name="Slant" xvalue="-10"/></location>
     </instance>
-    <instance familyname="Sabas UI" stylename="Condensed Regular" name="Sabas UI Condensed Regular">
+    <instance familyname="Sabas UI" stylename="Cond Regular" name="Sabas UI Cond Regular">
       <location><dimension name="Weight" xvalue="400"/><dimension name="Width" xvalue="75"/></location>
     </instance>
-    <instance familyname="Sabas UI" stylename="Extended Regular" name="Sabas UI Extended Regular">
+    <instance familyname="Sabas UI" stylename="Ext Regular" name="Sabas UI Ext Regular">
       <location><dimension name="Weight" xvalue="400"/><dimension name="Width" xvalue="125"/></location>
     </instance>
-    <instance familyname="Sabas UI" stylename="Condensed Bold" name="Sabas UI Condensed Bold">
+    <instance familyname="Sabas UI" stylename="Cond Bold" name="Sabas UI Cond Bold">
       <location><dimension name="Weight" xvalue="700"/><dimension name="Width" xvalue="75"/></location>
     </instance>
-    <instance familyname="Sabas UI" stylename="Extended Bold" name="Sabas UI Extended Bold">
+    <instance familyname="Sabas UI" stylename="Ext Bold" name="Sabas UI Ext Bold">
       <location><dimension name="Weight" xvalue="700"/><dimension name="Width" xvalue="125"/></location>
     </instance>
   </instances>

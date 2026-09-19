@@ -60,12 +60,7 @@ def add_new_marks(font):
     # above marks sit (bottom at 800). One centreline, so the weight holds round
     # the turn.
     g = add_glyph(font, "hookabovecomb", 0x0309, 0)
-    T1.stroke(g, T1.spline([
-        (-46, 872, 82.0, None, 44.0),
-        (0,   928, 0.0,  46.0, 46.0),
-        (48,  874, 270.0, 42.0, 34.0),
-        (6,   838, 205.0, 34.0, None),
-    ]), *ACCENT_NIB)
+    T1.stroke(g, T1.arc_spline(0, 880, 50, 54, 175.0, -80.0), *ACCENT_NIB)
 
     # dotbelowcomb U+0323: a true circle at the size of the i-dot.
     g = add_glyph(font, "dotbelowcomb", 0x0323, 0)
@@ -212,6 +207,10 @@ def main():
     add_vietnamese_bases(font)
     add_latin_ext_a(font)
     add_standalone(font)
+
+    import build_coverage
+    viet, symbols, fixed = build_coverage.add_all(font)
+    print(f"coverage: +{viet} accented letters, +{symbols} symbols, {fixed} composites re-placed")
 
     import finalize
     added, n_anchors, pairs = finalize.finalize(font)

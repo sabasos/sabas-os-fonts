@@ -24,6 +24,7 @@ V0, H0 = 88.0, 76.0
 XH, CAP, ASC = 540.0, 720.0, 750.0
 SIDE_K = 1.1             # share of the extra stem width added to each side bearing
 MITER_LIMIT = 3.0
+MARK_OFFSET_K = 0.5      # accents are already lighter than a stem, so they follow the weight at half rate
 SMOOTH_COS = math.cos(math.radians(6.0))
 
 
@@ -167,6 +168,28 @@ def _offset_contour(points, dx, dy, left_fill):
     return new
 
 
+MIN_AREA_KEEP = 0.12     # an offset may not leave less than this share of a contour's area
+BACKOFF = (1.0, 0.8, 0.62, 0.48, 0.36, 0.26, 0.18)
+
+
+def _offset_safe(points, dx, dy, left_fill):
+    """_offset_contour, backed off until the contour survives.
+
+    Thinning is fine for a stem and fatal for a hairline accent, a slash or a ring: the
+    same offset turns them inside out or to nothing. Try the full offset, then gentler
+    ones, and keep the first that leaves the contour the same way round with a
+    meaningful share of its area.
+    """
+    orig = [(p.x, p.y) for p in points]
+    a0 = _area(orig)
+    for k in BACKOFF:
+        new = _offset_contour(points, dx * k, dy * k, left_fill)
+        a1 = _area(new)
+        if a0 == 0 or (a1 * a0 > 0 and abs(a1) >= MIN_AREA_KEEP * abs(a0)):
+            return new
+    return orig
+
+
 GAP_KEEP = 0.75          # share of an original vertical gap a heavier weight keeps
 
 
@@ -287,7 +310,8 @@ def _build_master(src_path, dst_path, style, V, H, weight_class=None,
                 p.x, p.y = x, y
             ymin_orig = min(y for _, y in src_pts)
             floating = (kind == "mark") or (kind == "lower" and ymin_orig >= P + 20)
-            new = _offset_contour(c.points, dx, d_eff, left)
+            k = MARK_OFFSET_K if kind == "mark" else 1.0
+            new = _offset_safe(c.points, dx * k, d_eff * k, left)
             if floating:
                 shift_y = ymin_orig - min(y for _, y in new)
                 new = [(x, y + shift_y) for x, y in new]

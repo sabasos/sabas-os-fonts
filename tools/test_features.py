@@ -28,7 +28,7 @@ CASES = [
     ("a", {"ordn": True}, ["a"]),
     ("í", {}, ["iacute"]),
     ("j̈", {}, ["uni0237", "dieresiscomb"]),
-    ("ị", {}, ["i", "dotbelowcomb"]),
+    ("ị", {}, ["uni1ECB"]),
 ]
 
 

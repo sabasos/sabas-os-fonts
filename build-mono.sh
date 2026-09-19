@@ -23,7 +23,7 @@ for inst in TTFont(vf)['fvar'].instances:
     loc = dict(inst.coordinates)
     if any(abs(loc[t] - axes[t].defaultValue) > 1e-6 for t in loc if t != 'wght'):
         continue   # statics are the upright weights; slant and grade live in the VF
-    out = instantiateVariableFont(font, loc, inplace=True, overlap=OverlapMode.KEEP_AND_DONT_SET_FLAGS)
+    out = instantiateVariableFont(font, loc, inplace=True, overlap=OverlapMode.REMOVE)
     path = f"fonts/SabasM-{name.replace(' ', '')}.ttf"
     out.save(path)
     print(f'  {name} -> {path}')

@@ -49,11 +49,25 @@ def write_alternates_fea(font, path=ALTERNATES_FEA):
         fh.write("# ss01: single-storey a, for a and every accented a.\n")
         fh.write("@ss01_base = [" + " ".join(base) + "];\n")
         fh.write("@ss01_alt = [" + " ".join(n + ".ss01" for n in base) + "];\n")
-        fh.write("feature ss01 {\n    sub @ss01_base by @ss01_alt;\n} ss01;\n")
+        fh.write("feature ss01 {\n    featureNames { name \"Single-storey a\"; };\n"
+                 "    sub @ss01_base by @ss01_alt;\n} ss01;\n")
+
+
+def mark_categories(font):
+    """GDEF classes for every glyph: combining marks are marks, everything else a base.
+
+    The compiler takes this table as complete. Listing only the marks leaves the bases
+    unclassified and mark-to-base positioning is silently not generated.
+    """
+    font.lib["public.openTypeCategories"] = {
+        g.name: ("mark" if g.name.endswith("comb") and g.width == 0 else "base")
+        for g in font if g.name != ".notdef"}
 
 
 def finalize(font):
     """Returns (ss01 alternates added, anchors, kern pairs)."""
     added = ss01_alternates(font)
     write_alternates_fea(font)
-    return added, anchors.add_anchors(font), kerning.apply(font)
+    result = added, anchors.add_anchors(font), kerning.apply(font)
+    mark_categories(font)          # last, so it sees every glyph added above
+    return result

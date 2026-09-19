@@ -156,8 +156,8 @@ and the pixel-grid table in §6.3 legible to humans.
 | `sTypoDescender` | −200 | |
 | `sTypoLineGap` | 200 | ⇒ default line height 1.20 em |
 | `hhea.ascender` / `.descender` / `.lineGap` | 800 / −200 / 200 | mirror typo exactly |
-| `usWinAscent` | 1010 | real ink max: stacked Vietnamese |
-| `usWinDescent` | 300 | real ink min: `Ģ ç ŋ Ų` |
+| `usWinAscent` | 1120 | real ink max: stacked Vietnamese (measured 1083 in Regular; margin for the heavier weights) |
+| `usWinDescent` | 360 | real ink min: `Ģ ç ŋ Ų` (measured 342) |
 | `fsSelection` bit 7 | **set** | `USE_TYPO_METRICS` — non-negotiable |
 
 This is the highest-leverage constraint in the document. Because **Sabas Han**, **Sabas

@@ -532,14 +532,12 @@ def comma_shape(g: ufoLib2.Glyph, cx: int, cy: int, r: int = 55,
     """
     dot(g, cx, cy, r)
     tail = cy - drop
-    pen = g.getPen()
-    pen.moveTo((cx + int(r * 0.62), cy + 10))
-    pen.curveTo((cx + int(r * 0.80), cy - 60), (cx + int(r * 0.55), cy - 130),
-                (cx - int(r * 0.29), tail))
-    pen.lineTo((cx - r - 1, tail + 40))
-    pen.curveTo((cx - int(r * 0.29), cy - 120), (cx - int(r * 0.36), cy - 40),
-                (cx - int(r * 0.55), cy + 10))
-    pen.closePath()
+    # The tail is one stroked curve that leaves the bowl and swings down and to the
+    # left, so it carries close to a stem's weight along its whole length.
+    stroke(g, spline([
+        (cx + 6, cy - 12,       270.0, None, 46.0),
+        (cx - 40, tail + 26,    238.0, 44.0, None),
+    ]), 68, 58)
     return (cy + r + tail) / 2
 
 
@@ -573,7 +571,7 @@ SIDEBEARINGS: dict[str, tuple[int, int]] = {
     # Flat-sided forms whose arms or terminals nearly touched the advance.
     "c": (48, 40), "f": (60, 30),
     # l's tail and t's foot run nearly to the advance, so l+m, l+n and t+h touched.
-    "l": (60, 58), "t": (40, 50), "E": (60, 50), "F": (60, 50), "L": (60, 40),
+    "l": (60, 90), "t": (40, 66), "E": (60, 50), "F": (60, 50), "L": (60, 40),
     # Bowls widened above; give them all the same sidebearings as O.
     "B": (60, 60), "D": (60, 60), "P": (60, 60), "R": (60, 60), "G": (60, 60),
     "J": (56, 60),
@@ -2567,21 +2565,17 @@ def draw_extra_symbols(font):
     oval(g, 180, (P_BOWL + CAPHEIGHT) // 2, 130,
          (CAPHEIGHT - P_BOWL) // 2 + OVS)   # its round left side
 
-    # multiplication  ×
-    g = add_glyph(font, "multiply", 560, 0x00D7)
-    pen = g.getPen()
-    pen.moveTo((80, 160)); pen.lineTo((160, 160)); pen.lineTo((280, 300))
-    pen.lineTo((400, 160)); pen.lineTo((480, 160)); pen.lineTo((480, 240))
-    pen.lineTo((360, 380)); pen.lineTo((480, 520)); pen.lineTo((480, 600))
-    pen.lineTo((400, 600)); pen.lineTo((280, 460)); pen.lineTo((160, 600))
-    pen.lineTo((80, 600));  pen.lineTo((80, 520));  pen.lineTo((200, 380))
-    pen.lineTo((80, 240));  pen.closePath()
+    # multiplication  ×  and division  ÷, on the same 580 grid as + and =: the same
+    # ink width, the same centre line, round dots.
+    MID = CAPHEIGHT // 2
+    g = add_glyph(font, "multiply", 580, 0x00D7)
+    band(g, 110, MID - 190, 470, MID + 190)
+    band(g, 110, MID + 190, 470, MID - 190)
 
-    # division  ÷
-    g = add_glyph(font, "divide", 560, 0x00F7)
-    rectwh(g, 80, 340, 400, 80)    # bar
-    rectwh(g, 235, 460, 90, 90)    # top dot
-    rectwh(g, 235, 210, 90, 90)    # bottom dot
+    g = add_glyph(font, "divide", 580, 0x00F7)
+    rect(g, 40, MID - HSTEM // 2, 540, MID + HSTEM // 2)
+    dot(g, 290, MID + 150, 48)
+    dot(g, 290, MID - 150, 48)
 
     # bullet  •
     g = add_glyph(font, "bullet", 400, 0x2022)
@@ -2923,7 +2917,8 @@ ACCENTED2 = [
     # caron
     ("Dcaron",      0x010E, "D", "caroncomb"),
     ("dcaron",      0x010F, "d", "caroncomb"),
-    ("Gcaron",      0x01E6, "G", "caroncomb"),  # not in missing but safe
+    ("Gcaron",      0x01E6, "G", "caroncomb"),
+    ("gcaron",      0x01E7, "g", "caroncomb"),
     # breve
     ("Gbreve",      0x011E, "G", "brevecomb"),
     ("gbreve",      0x011F, "g", "brevecomb"),
@@ -3005,9 +3000,15 @@ def tidy_contours(font: ufoLib2.Font, sliver: float = 4.0) -> int:
     """
     removed = 0
     for g in font:
-        for c in g.contours:
+        for c in list(g.contours):
             for p in c.points:
                 p.x, p.y = round(p.x), round(p.y)
+            xs = [p.x for p in c.points]
+            ys = [p.y for p in c.points]
+            if max(xs) - min(xs) < 3 or max(ys) - min(ys) < 3:
+                g.contours.remove(c)          # a stroke end that left a zero-area contour
+                removed += 1
+        for c in g.contours:
             changed = True
             while changed and len(c.points) > 3:
                 changed = False
@@ -3018,6 +3019,18 @@ def tidy_contours(font: ufoLib2.Font, sliver: float = 4.0) -> int:
                     q = pts[on[k - 1]]
                     if p.type == "line" and math.hypot(p.x - q.x, p.y - q.y) < sliver:
                         del pts[i]
+                        removed += 1
+                        changed = True
+                        break
+                    # A curve that starts and ends on the same spot is a stroke end
+                    # rounded to nothing; both handles and the end point go.
+                    n_pts = len(pts)
+                    if (p.type == "curve" and pts[(i - 1) % n_pts].type is None
+                            and pts[(i - 2) % n_pts].type is None
+                            and on[k - 1] == (i - 3) % n_pts
+                            and math.hypot(p.x - q.x, p.y - q.y) < 1.5):
+                        for j in sorted({(i - 2) % n_pts, (i - 1) % n_pts, i}, reverse=True):
+                            del pts[j]
                         removed += 1
                         changed = True
                         break
@@ -3070,6 +3083,27 @@ def draw_oldstyle_figures(font: ufoLib2.Font) -> None:
         sb = PNUM_SIDEBEARING - (4 if n == "one" else 0)
         shift_x(g, sb - b[0])
         g.width = round(b[2] - b[0] + 2 * sb)
+
+
+def draw_caron_alts(font: ufoLib2.Font) -> None:
+    """Lcaron, dcaron, lcaron, tcaron: a tick beside the stem, not a caron over it.
+
+    A caron on a letter with an ascender collides with the ascender's top, so the
+    convention is a small vertical stroke to the right of the stem, drawn so it cannot
+    be mistaken for an apostrophe: it leans and it is longer.
+    """
+    g = add_glyph(font, "caronalt", 0, None)
+    pen = g.getPen()
+    pen.moveTo((0, 0)); pen.lineTo((58, 0)); pen.lineTo((78, 172)); pen.lineTo((20, 172))
+    pen.closePath()
+    for name, cp, base, extra in [("tcaron", 0x0165, "t", 70), ("dcaron", 0x010F, "d", 100),
+                                  ("Lcaron", 0x013D, "L", 0), ("lcaron", 0x013E, "l", 90)]:
+        b = ink(font, base)
+        top = b[3]
+        x = max(p.x for c in font[base].contours for p in c.points if p.y >= top - 45)
+        g2 = add_glyph(font, name, font[base].width + extra, cp)
+        component(g2, base)
+        component(g2, "caronalt", round(x + 22), round(top - 172 + (10 if base == "t" else 0)))
 
 
 def draw_alternates(font: ufoLib2.Font) -> None:
@@ -3153,20 +3187,20 @@ def draw_alternates(font: ufoLib2.Font) -> None:
     frac_w = font["fraction"].width
 
     def vulgar(name, cp, num, den):
-        wn = font[f"{num}.numr"].width
-        wd = font[f"{den}.dnom"].width
+        wn = round(font[num].width * SMALL_FIG_SCALE)
+        wd = round(font[den].width * SMALL_FIG_SCALE)
         g = add_glyph(font, name, wn + frac_w + wd, cp)
-        component(g, f"{num}.numr", 0, 0)
+        component(g, num, 0, top_dy, SMALL_FIG_SCALE)
         component(g, "fraction", wn, 0)
-        component(g, f"{den}.dnom", wn + frac_w, 0)
+        component(g, den, wn + frac_w, 0, SMALL_FIG_SCALE)
 
     vulgar("onehalf", 0x00BD, "one", "two")
     vulgar("onequarter", 0x00BC, "one", "four")
     vulgar("threequarters", 0x00BE, "three", "four")
     for name, cp, fig in [("onesuperior", 0x00B9, "one"), ("twosuperior", 0x00B2, "two"),
                           ("threesuperior", 0x00B3, "three")]:
-        g = add_glyph(font, name, font[f"{fig}.sups"].width, cp)
-        component(g, f"{fig}.sups")
+        g = add_glyph(font, name, round(font[fig].width * SMALL_FIG_SCALE), cp)
+        component(g, fig, 0, top_dy, SMALL_FIG_SCALE)
 
 
 def main():
@@ -3179,6 +3213,10 @@ def main():
     font.info.openTypeHheaAscender = 800
     font.info.openTypeHheaDescender = -200
     font.info.openTypeHheaLineGap = 200
+    # usWin* must cover the tallest stacked accent (Vietnamese, measured 1083) and the
+    # deepest tail or cedilla (342), in every weight, or Windows clips them.
+    font.info.openTypeOS2WinAscent = 1120
+    font.info.openTypeOS2WinDescent = 360
 
     for draw in LOWERCASE_DRAWERS:
         draw(font)
@@ -3204,6 +3242,7 @@ def main():
 
     draw_accented(font)
     draw_accented2(font)
+    draw_caron_alts(font)
     draw_alternates(font)
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
     import finalize

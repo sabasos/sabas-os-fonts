@@ -11,6 +11,9 @@ import sys
 from pathlib import Path
 from fontTools.ttLib import TTFont
 
+sys.path.insert(0, str(Path(__file__).parent))
+from font_identity import apply_identity
+
 
 # ---------------------------------------------------------------------------
 # hhea
@@ -43,6 +46,66 @@ def add_gasp(font: TTFont) -> None:
 # STAT AxisValues
 # ---------------------------------------------------------------------------
 
+def fix_ribbi(font: TTFont) -> None:
+    """Regular/Bold style linking on the two RIBBI statics.
+
+    Bold carries fsSelection bit 5 and head.macStyle bit 0. Every other upright weight is
+    named Regular in ID 2 (its real name is in ID 17), so it carries bit 6. Without these
+    an app cannot pair a family's Regular with its Bold.
+    """
+    if "fvar" in font:
+        return
+    os2, head = font["OS/2"], font["head"]
+    weight = os2.usWeightClass
+    os2.fsSelection &= ~(0x20 | 0x40)
+    head.macStyle &= ~0x1
+    if weight == 700:
+        os2.fsSelection |= 0x20
+        head.macStyle |= 0x1
+    else:
+        os2.fsSelection |= 0x40     # ID2 is 'Regular' for every non-bold upright style
+
+
+def strip_mac_names(font: TTFont) -> None:
+    """Mac-platform name records are obsolete and only clutter the table."""
+    font["name"].names = [n for n in font["name"].names if n.platformID != 1]
+
+
+def add_prep(font: TTFont) -> None:
+    """Smart dropout control, so thin strokes do not vanish on a low-resolution rasteriser.
+
+    PUSHW 0x01FF, SCANCTRL, PUSHB 4, SCANTYPE.
+    """
+    from fontTools.ttLib import newTable
+    from fontTools.ttLib.tables import ttProgram
+    prep = newTable("prep")
+    prog = ttProgram.Program()
+    prog.fromBytecode(bytes([0xB8, 0x01, 0xFF, 0x85, 0xB0, 0x04, 0x8D]))
+    prep.program = prog
+    font["prep"] = prep
+    maxp = font["maxp"]
+    if hasattr(maxp, "maxStackElements"):
+        maxp.maxStackElements = max(maxp.maxStackElements, 2)
+
+
+STATIC_DEFAULTS = {"wdth": 100, "opsz": 16, "slnt": 0, "GRAD": 0}
+
+
+def select_for_static(axes, weight):
+    """A static font carries one STAT value per axis: its own. Windows reads the first
+    entry only, so a table listing every weight makes every instance report Thin."""
+    out = []
+    for ax in axes:
+        vals = ax.get("values")
+        if not vals:
+            out.append(ax)
+            continue
+        want = weight if ax["tag"] == "wght" else STATIC_DEFAULTS.get(ax["tag"])
+        keep = [v for v in vals if round(v.get("value", v.get("nominalValue", -9999))) == want]
+        out.append(dict(ax, values=keep or vals[:1]))
+    return out
+
+
 def add_stat_axis_values(font: TTFont) -> None:
     """Rebuild STAT using fontTools.otlLib.builder.buildStatTable.
 
@@ -64,26 +127,28 @@ def add_stat_axis_values(font: TTFont) -> None:
             dict(nominalValue=1000, name="Ultra",     rangeMinValue=950,  rangeMaxValue=1000),
         ]),
         dict(tag="wdth", name="Width", values=[
-            dict(nominalValue=75,  name="Condensed", rangeMinValue=50,    rangeMaxValue=87.5),
+            dict(nominalValue=75,  name="Cond", rangeMinValue=50,    rangeMaxValue=87.5),
             dict(nominalValue=100, name="Normal",    rangeMinValue=87.5,  rangeMaxValue=112.5, flags=0x2),
-            dict(nominalValue=125, name="Extended",  rangeMinValue=112.5, rangeMaxValue=150),
+            dict(nominalValue=125, name="Ext",  rangeMinValue=112.5, rangeMaxValue=150),
         ]),
         dict(tag="opsz", name="Optical Size", values=[
-            dict(nominalValue=10, name="Caption", rangeMinValue=6,  rangeMaxValue=13),
+            dict(nominalValue=10, name="Caption", rangeMinValue=6,  rangeMaxValue=13, flags=0x2),
             dict(nominalValue=16, name="Text",    rangeMinValue=13, rangeMaxValue=20, flags=0x2),
-            dict(nominalValue=32, name="Display", rangeMinValue=20, rangeMaxValue=72),
+            dict(nominalValue=32, name="Display", rangeMinValue=20, rangeMaxValue=72, flags=0x2),
         ]),
         dict(tag="slnt", name="Slant", values=[
             dict(nominalValue=0,   name="Upright", rangeMinValue=-2,  rangeMaxValue=2,  flags=0x2),
             dict(nominalValue=-10, name="Oblique", rangeMinValue=-20, rangeMaxValue=-2),
         ]),
         dict(tag="GRAD", name="Grade", values=[
-            dict(nominalValue=-200, name="GradMin",  rangeMinValue=-200, rangeMaxValue=-100),
+            dict(nominalValue=-200, name="GradMin",  rangeMinValue=-200, rangeMaxValue=-100, flags=0x2),
             dict(nominalValue=0,    name="GradNorm", rangeMinValue=-100, rangeMaxValue=75,  flags=0x2),
-            dict(nominalValue=150,  name="GradMax",  rangeMinValue=75,   rangeMaxValue=150),
+            dict(nominalValue=150,  name="GradMax",  rangeMinValue=75,   rangeMaxValue=150, flags=0x2),
         ]),
     ]
 
+    if "fvar" not in font:
+        axes = select_for_static(axes, font["OS/2"].usWeightClass)
     buildStatTable(font, axes)
 
 
@@ -95,7 +160,11 @@ def fixup(path: Path) -> None:
     font = TTFont(str(path))
     fix_hhea(font)
     add_gasp(font)
+    add_prep(font)
+    fix_ribbi(font)
     add_stat_axis_values(font)
+    strip_mac_names(font)     # after STAT: building it adds Mac-platform names
+    apply_identity(font)
     font.save(str(path))
     hhea = font["hhea"]
     stat = font["STAT"].table if "STAT" in font else None

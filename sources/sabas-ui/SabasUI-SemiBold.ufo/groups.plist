@@ -14,6 +14,19 @@
       <string>Aogonek</string>
       <string>Aring</string>
       <string>Atilde</string>
+      <string>uni01CD</string>
+      <string>uni1EA0</string>
+      <string>uni1EA2</string>
+      <string>uni1EA4</string>
+      <string>uni1EA6</string>
+      <string>uni1EA8</string>
+      <string>uni1EAA</string>
+      <string>uni1EAC</string>
+      <string>uni1EAE</string>
+      <string>uni1EB0</string>
+      <string>uni1EB2</string>
+      <string>uni1EB4</string>
+      <string>uni1EB6</string>
     </array>
     <key>public.kern1.FP</key>
     <array>
@@ -61,6 +74,19 @@
       <string>Gcircumflex</string>
       <string>Omacron</string>
       <string>Obreve</string>
+      <string>uni01D1</string>
+      <string>uni1ECC</string>
+      <string>uni1ECE</string>
+      <string>uni1ED0</string>
+      <string>uni1ED2</string>
+      <string>uni1ED4</string>
+      <string>uni1ED6</string>
+      <string>uni1ED8</string>
+      <string>uni1EDA</string>
+      <string>uni1EDC</string>
+      <string>uni1EDE</string>
+      <string>uni1EE0</string>
+      <string>uni1EE2</string>
     </array>
     <key>public.kern1.R</key>
     <array>
@@ -68,6 +94,7 @@
       <string>Racute</string>
       <string>Rcaron</string>
       <string>registered</string>
+      <string>rupee</string>
       <string>Rcommaaccent</string>
     </array>
     <key>public.kern1.T</key>
@@ -91,6 +118,9 @@
       <string>Ycircumflex</string>
       <string>Ydieresis</string>
       <string>Ygrave</string>
+      <string>uni1EF4</string>
+      <string>uni1EF6</string>
+      <string>uni1EF8</string>
     </array>
     <key>public.kern1.quote</key>
     <array>
@@ -100,6 +130,8 @@
       <string>quotedblleft</string>
       <string>quotesingle</string>
       <string>quotedbl</string>
+      <string>uni02BB</string>
+      <string>uni02BC</string>
     </array>
     <key>public.kern1.r</key>
     <array>
@@ -112,6 +144,8 @@
     <array>
       <string>seven</string>
       <string>seven.onum</string>
+      <string>seveninferior</string>
+      <string>sevensuperior</string>
     </array>
     <key>public.kern1.vwy</key>
     <array>
@@ -126,6 +160,9 @@
       <string>ycircumflex</string>
       <string>ydieresis</string>
       <string>ygrave</string>
+      <string>uni1EF5</string>
+      <string>uni1EF7</string>
+      <string>uni1EF9</string>
     </array>
     <key>public.kern2.A</key>
     <array>
@@ -139,6 +176,19 @@
       <string>Aogonek</string>
       <string>Aring</string>
       <string>Atilde</string>
+      <string>uni01CD</string>
+      <string>uni1EA0</string>
+      <string>uni1EA2</string>
+      <string>uni1EA4</string>
+      <string>uni1EA6</string>
+      <string>uni1EA8</string>
+      <string>uni1EAA</string>
+      <string>uni1EAC</string>
+      <string>uni1EAE</string>
+      <string>uni1EB0</string>
+      <string>uni1EB2</string>
+      <string>uni1EB4</string>
+      <string>uni1EB6</string>
     </array>
     <key>public.kern2.Round</key>
     <array>
@@ -166,6 +216,19 @@
       <string>Gcircumflex</string>
       <string>Omacron</string>
       <string>Obreve</string>
+      <string>uni01D1</string>
+      <string>uni1ECC</string>
+      <string>uni1ECE</string>
+      <string>uni1ED0</string>
+      <string>uni1ED2</string>
+      <string>uni1ED4</string>
+      <string>uni1ED6</string>
+      <string>uni1ED8</string>
+      <string>uni1EDA</string>
+      <string>uni1EDC</string>
+      <string>uni1EDE</string>
+      <string>uni1EE0</string>
+      <string>uni1EE2</string>
     </array>
     <key>public.kern2.T</key>
     <array>
@@ -188,6 +251,9 @@
       <string>Ycircumflex</string>
       <string>Ydieresis</string>
       <string>Ygrave</string>
+      <string>uni1EF4</string>
+      <string>uni1EF6</string>
+      <string>uni1EF8</string>
     </array>
     <key>public.kern2.lowstem</key>
     <array>
@@ -221,6 +287,24 @@
       <string>ubreve</string>
       <string>ij</string>
       <string>eng</string>
+      <string>uni01D0</string>
+      <string>uni01D4</string>
+      <string>uni01D6</string>
+      <string>uni01D8</string>
+      <string>uni01DA</string>
+      <string>uni01DC</string>
+      <string>uni01F9</string>
+      <string>uni1E3F</string>
+      <string>uni1E45</string>
+      <string>uni1EC9</string>
+      <string>uni1ECB</string>
+      <string>uni1EE5</string>
+      <string>uni1EE7</string>
+      <string>uni1EE9</string>
+      <string>uni1EEB</string>
+      <string>uni1EED</string>
+      <string>uni1EEF</string>
+      <string>uni1EF1</string>
     </array>
     <key>public.kern2.period</key>
     <array>
@@ -237,6 +321,8 @@
       <string>quotedblleft</string>
       <string>quotesingle</string>
       <string>quotedbl</string>
+      <string>uni02BB</string>
+      <string>uni02BC</string>
     </array>
     <key>public.kern2.round</key>
     <array>
@@ -281,6 +367,7 @@
       <string>emacron</string>
       <string>eogonek</string>
       <string>gbreve</string>
+      <string>gcaron</string>
       <string>gcedilla</string>
       <string>gdotaccent</string>
       <string>oacute</string>
@@ -293,6 +380,18 @@
       <string>scaron</string>
       <string>scedilla</string>
       <string>scommaaccent</string>
+      <string>uni1EA1.ss01</string>
+      <string>uni1EA3.ss01</string>
+      <string>uni1EA5.ss01</string>
+      <string>uni1EA7.ss01</string>
+      <string>uni1EA9.ss01</string>
+      <string>uni1EAB.ss01</string>
+      <string>uni1EAD.ss01</string>
+      <string>uni1EAF.ss01</string>
+      <string>uni1EB1.ss01</string>
+      <string>uni1EB3.ss01</string>
+      <string>uni1EB5.ss01</string>
+      <string>uni1EB7.ss01</string>
       <string>ohorn</string>
       <string>ccircumflex</string>
       <string>ebreve</string>
@@ -301,6 +400,42 @@
       <string>obreve</string>
       <string>scircumflex</string>
       <string>longs</string>
+      <string>uni01CE</string>
+      <string>uni01D2</string>
+      <string>uni1E63</string>
+      <string>uni1EA1</string>
+      <string>uni1EA3</string>
+      <string>uni1EA5</string>
+      <string>uni1EA7</string>
+      <string>uni1EA9</string>
+      <string>uni1EAB</string>
+      <string>uni1EAD</string>
+      <string>uni1EAF</string>
+      <string>uni1EB1</string>
+      <string>uni1EB3</string>
+      <string>uni1EB5</string>
+      <string>uni1EB7</string>
+      <string>uni1EB9</string>
+      <string>uni1EBB</string>
+      <string>uni1EBD</string>
+      <string>uni1EBF</string>
+      <string>uni1EC1</string>
+      <string>uni1EC3</string>
+      <string>uni1EC5</string>
+      <string>uni1EC7</string>
+      <string>uni1ECD</string>
+      <string>uni1ECF</string>
+      <string>uni1ED1</string>
+      <string>uni1ED3</string>
+      <string>uni1ED5</string>
+      <string>uni1ED7</string>
+      <string>uni1ED9</string>
+      <string>uni1EDB</string>
+      <string>uni1EDD</string>
+      <string>uni1EDF</string>
+      <string>uni1EE1</string>
+      <string>uni1EE3</string>
+      <string>uni01CE.ss01</string>
     </array>
     <key>public.kern2.vwy</key>
     <array>
@@ -315,6 +450,9 @@
       <string>ycircumflex</string>
       <string>ydieresis</string>
       <string>ygrave</string>
+      <string>uni1EF5</string>
+      <string>uni1EF7</string>
+      <string>uni1EF9</string>
     </array>
   </dict>
 </plist>

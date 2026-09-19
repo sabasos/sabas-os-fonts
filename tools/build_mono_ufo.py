@@ -35,8 +35,17 @@ FEATURES = "include(../features/mono/features.fea);\n"
 
 
 def _is_mark(font, name):
+    """A combining mark that is attached by anchor. The horn and the caron tick belong
+    to their letter's outline instead: they are folded in, so the letter is compressed
+    with them and stays inside its cell."""
     g = font[name]
-    return name.endswith("comb") and g.width == 0
+    return name.endswith("comb") and name != "horncomb" and g.width == 0
+
+
+# Alternates that only the UI features reach. Mono has its own feature set, so these
+# would be glyphs no feature can select.
+UI_ONLY_SUFFIXES = (".ss01", ".ss02", ".ss03", ".cv01", ".cv02", ".numr", ".dnom",
+                    ".sups", ".subs", ".onum", ".tnum", ".case")
 
 
 def _draw_decomposed(font, name, pen):
@@ -76,16 +85,18 @@ def _derive(src):
     left = om.fill_is_left(src)
     mark_plan = {}
     for sg in src:
+        if sg.name.endswith(UI_ONLY_SUFFIXES) or sg.name == "caronalt":
+            continue
         ng = dst.newGlyph(sg.name)
         ng.unicodes = list(sg.unicodes)
-        if _is_mark(src, sg.name):
+        if sg.width == 0:
             ng.width = 0
             for c in sg.contours:
                 ng.appendContour(copy.deepcopy(c))
             continue
         marks = [c for c in sg.components if _is_mark(src, c.baseGlyph)]
         if marks:
-            mark_plan[sg.name] = [m.baseGlyph for m in marks]
+            mark_plan[sg.name] = [(m.baseGlyph, m.transformation) for m in marks]
         _draw_decomposed(src, sg.name, ng.getPen())
         ng.width = CELL
         b = _bounds(dst, ng)
@@ -107,7 +118,7 @@ def _derive(src):
                 p.x *= xs
             ymin = min(p.y for p in c.points)
             floating = kind == "lower" and ymin >= P + 20
-            new = om._offset_contour(c.points, dx, d_eff, left)
+            new = om._offset_safe(c.points, dx, d_eff, left)
             if floating:
                 shift = ymin - min(y for _, y in new)
                 new = [(x, y + shift) for x, y in new]
@@ -189,18 +200,21 @@ def _place_marks(font, src, mark_plan):
     for name, marks in mark_plan.items():
         g = font[name]
         run = {a.name: (a.x, a.y) for a in g.anchors}
-        for m in marks:
-            mg = font[m]
-            ma = {a.name: (a.x, a.y) for a in mg.anchors}
+        for m, t in marks:
+            ma = {a.name: (a.x, a.y) for a in font[m].anchors}
             side = "bottom" if m in BELOW else "top"
-            if side not in run or "_" + side not in ma:
-                continue
-            dx = round(run[side][0] - ma["_" + side][0])
-            dy = round(run[side][1] - ma["_" + side][1])
+            if side in run and "_" + side in ma:
+                dx = round(run[side][0] - ma["_" + side][0])
+                dy = round(run[side][1] - ma["_" + side][1])
+                if side in ma:
+                    run[side] = (ma[side][0] + dx, ma[side][1] + dy)
+            else:
+                # A spacing accent has no base letter to anchor to: keep its offset
+                # from the UI glyph, re-centred in the cell.
+                dx = round(t[4] + (CELL - src[name].width) / 2)
+                dy = round(t[5] * CAP_M / SRC_CAP)
             g.components.append(ufoLib2.objects.Component(
                 baseGlyph=m, transformation=(1, 0, 0, 1, dx, dy)))
-            if side in ma:
-                run[side] = (ma[side][0] + dx, ma[side][1] + dy)
 
 
 # Texture healing (brief section 8): on a fixed grid narrow letters leave holes and wide
@@ -221,6 +235,9 @@ def _restyled(font, name, factor, left_fill):
     g.width = CELL
     src = font[name]
     for c in src.contours:
+        xs, ys = [p.x for p in c.points], [p.y for p in c.points]
+        if max(xs) - min(xs) < 6 or max(ys) - min(ys) < 6:
+            continue                     # a stroke-end sliver, not part of the letter
         pts = copy.deepcopy(c)
         for p in pts.points:
             p.x = CELL / 2 + (p.x - CELL / 2) * factor
@@ -301,7 +318,15 @@ def build():
     info.postscriptOtherBlues = [DESC_M - 10, DESC_M]
     info.openTypeOS2TypoAscender, info.openTypeOS2TypoDescender, info.openTypeOS2TypoLineGap = 800, -200, 200
     info.openTypeHheaAscender, info.openTypeHheaDescender, info.openTypeHheaLineGap = 800, -200, 200
-    info.openTypeOS2WinAscent, info.openTypeOS2WinDescent = 1010, 300
+    info.openTypeOS2WinAscent, info.openTypeOS2WinDescent = 1120, 360
+    info.openTypeNamePreferredFamilyName = "Sabas Mono"
+    info.openTypeNamePreferredSubfamilyName = "Regular"
+    info.postscriptFontName = "SabasMono-Regular"
+    info.postscriptFullName = "Sabas Mono Regular"
+    info.openTypeNameUniqueID = "SabasMono-Regular"
+    info.postscriptIsFixedPitch = True
+    # PANOSE: sans-serif, book weight, monospaced.
+    info.openTypeOS2Panose = [2, 11, 5, 9, 2, 2, 3, 2, 2, 4]
     font.lib["public.glyphOrder"] = [n for n in src.lib.get("public.glyphOrder", []) if n in font] + \
         [g.name for g in font if g.name not in src.lib.get("public.glyphOrder", [])]
     font.features.text = FEATURES
@@ -319,6 +344,8 @@ def build():
     write_healing_fea(font, made)
     T1.tidy_contours(font)
     anchors.add_anchors(font)
+    import finalize
+    finalize.mark_categories(font)
 
     if DST.exists():
         shutil.rmtree(DST)
