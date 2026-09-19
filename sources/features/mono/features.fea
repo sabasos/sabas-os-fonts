@@ -1,0 +1,15 @@
+# mono/features.fea
+# Sabas Mono layout features. No kern feature, by design (brief section 8): a fixed
+# grid has nothing to kern, and an absent table cannot be reintroduced by a shaper.
+# mark / mkmk come from the anchors in the UFO.
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+
+include(../features/_shared/mark_classes.fea);
+
+feature ccmp {
+    sub i' @MarkAbove by dotlessi;
+    sub j' @MarkAbove by uni0237;
+} ccmp;
+
+include(../features/mono/healing.fea);

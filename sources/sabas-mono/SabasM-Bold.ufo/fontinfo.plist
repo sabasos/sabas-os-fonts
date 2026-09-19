@@ -37,7 +37,7 @@
     <key>openTypeOS2VendorID</key>
     <string>SBAS</string>
     <key>openTypeOS2WeightClass</key>
-    <integer>400</integer>
+    <integer>800</integer>
     <key>openTypeOS2WinAscent</key>
     <integer>1010</integer>
     <key>openTypeOS2WinDescent</key>
@@ -48,21 +48,21 @@
     <real>0.039625</real>
     <key>postscriptBlueValues</key>
     <array>
-      <integer>-19</integer>
+      <integer>-12</integer>
       <integer>0</integer>
-      <integer>809</integer>
-      <integer>841</integer>
-      <integer>1084</integer>
-      <integer>1116</integer>
-      <integer>1163</integer>
-      <integer>1194</integer>
+      <integer>515</integer>
+      <integer>535</integer>
+      <integer>690</integer>
+      <integer>710</integer>
+      <integer>740</integer>
+      <integer>760</integer>
     </array>
     <key>postscriptFontName</key>
     <string>SabasUI-Regular</string>
     <key>postscriptOtherBlues</key>
     <array>
-      <integer>-338</integer>
-      <integer>-322</integer>
+      <integer>-215</integer>
+      <integer>-205</integer>
     </array>
     <key>postscriptSlantAngle</key>
     <integer>0</integer>

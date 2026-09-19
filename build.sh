@@ -34,6 +34,8 @@ axes = {a.axisTag: a for a in fvar.axes}
 for inst in fvar.instances:
     name = vf['name'].getDebugName(inst.subfamilyNameID) or f'instance_{inst.subfamilyNameID}'
     loc = {tag: val for tag, val in inst.coordinates.items()}
+    if any(abs(loc[t] - axes[t].defaultValue) > 1e-6 for t in loc if t != 'wght'):
+        continue   # statics are the upright, normal-width weights; the rest live in the VF
     print(f'  Instantiating {name} ...')
     out = instantiateVariableFont(
         TTFont(vf_path),

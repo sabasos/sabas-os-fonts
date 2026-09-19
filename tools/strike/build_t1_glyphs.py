@@ -571,7 +571,9 @@ SIDEBEARINGS: dict[str, tuple[int, int]] = {
     # i and j were spaced as though they were as wide as n.
     "i": (60, 60), "j": (40, 60),
     # Flat-sided forms whose arms or terminals nearly touched the advance.
-    "c": (48, 40), "f": (60, 30), "E": (60, 50), "F": (60, 50), "L": (60, 40),
+    "c": (48, 40), "f": (60, 30),
+    # l's tail and t's foot run nearly to the advance, so l+m, l+n and t+h touched.
+    "l": (60, 58), "t": (40, 50), "E": (60, 50), "F": (60, 50), "L": (60, 40),
     # Bowls widened above; give them all the same sidebearings as O.
     "B": (60, 60), "D": (60, 60), "P": (60, 60), "R": (60, 60), "G": (60, 60),
     "J": (56, 60),
@@ -670,10 +672,10 @@ def flip_x(g: ufoLib2.Glyph, axis: float) -> None:
 # contour whose outer edge genuinely reaches the x-height and whose counter is
 # offset from it by HSTEM, so the shoulder carries the same weight as the stems.
 
-SHOULDER_FLAT = 0.38   # fraction of the run that stays flat at the apex
+SHOULDER_FLAT = 0.16   # fraction of the run that stays flat at the apex
 SHOULDER_H    = 0.55   # horizontal handle, as a fraction of the run
 SHOULDER_V    = 0.45   # vertical handle, as a fraction of the drop
-SHOULDER_KNEE = 0.574  # height at which the shoulder has become a plain stem
+SHOULDER_KNEE = 0.54   # height at which the shoulder has become a plain stem
 
 
 def apex_end(x_from: int, x_to: int) -> int:
@@ -695,6 +697,16 @@ def curve_up(pen, x_from: int, y_knee: int, x_to: int, y_top: int) -> None:
                 (x_to, y_top))
 
 
+def arch_start(pen, x1: int, y_in: int, ax: int) -> None:
+    """Counter edge rising off a stem's inner face and into the apex.
+
+    The arch leaves the stem at a crotch, a short way below the apex, and climbs
+    into it, instead of meeting a flat ceiling at a right angle.
+    """
+    pen.lineTo((x1, y_in - 30))
+    pen.curveTo((x1 + 6, y_in - 8), (x1 + 26, y_in), (max(ax, x1 + 44), y_in))
+
+
 def n_shape(g: ufoLib2.Glyph, x0: int, x3: int, y_top: int,
             stem: int = VSTEM, thick: int = HSTEM) -> None:
     """The n-form: two stems joined by a shoulder, as one contour.
@@ -710,9 +722,8 @@ def n_shape(g: ufoLib2.Glyph, x0: int, x3: int, y_top: int,
     pen = g.getPen()
     pen.moveTo((x0, 0))
     pen.lineTo((x1, 0))
-    pen.lineTo((x1, y_in))
-    pen.lineTo((ax, y_in))
-    curve_down(pen, ax, y_in, x2, knee)
+    arch_start(pen, x1, y_in, ax)
+    curve_down(pen, max(ax, x1 + 44), y_in, x2, knee)
     pen.lineTo((x2, 0))
     pen.lineTo((x3, 0))
     pen.lineTo((x3, knee))
@@ -1086,9 +1097,9 @@ def draw_g(font: ufoLib2.Font) -> None:
     stroke(g, spline([
         (466, XHEIGHT,  270.0, None, None),   # flat top, level with the bowl's
         (466, LOW + R,  270.0, None, K_CIRCLE * R),
-        (466 - R, LOW,  180.0, K_CIRCLE * R, 67.7),
-        (120, -65,       97.0, 67.7, None),   # up under the bowl
-    ]), VSTEM, HSTEM, cap0=0.0, cap1=0.0)
+        (466 - R, LOW,  180.0, K_CIRCLE * R, 62.0),
+        (128, -104,     112.0, 62.0, None),   # up and clear of the bowl
+    ]), VSTEM, HSTEM, cap0=0.0)
 
 
 def draw_h(font: ufoLib2.Font) -> None:
@@ -1100,9 +1111,8 @@ def draw_h(font: ufoLib2.Font) -> None:
     pen = g.getPen()
     pen.moveTo((60, 0))
     pen.lineTo((148, 0))
-    pen.lineTo((148, y_in))
-    pen.lineTo((ax, y_in))
-    curve_down(pen, ax, y_in, 422, knee)
+    arch_start(pen, 148, y_in, ax)
+    curve_down(pen, max(ax, 192), y_in, 422, knee)
     pen.lineTo((422, 0))
     pen.lineTo((510, 0))
     pen.lineTo((510, knee))
@@ -1116,21 +1126,23 @@ def draw_h(font: ufoLib2.Font) -> None:
 def draw_i(font: ufoLib2.Font) -> None:
     g = add_glyph(font, "i", 260, 0x0069)
     rect(g, 86, 0, 174, XHEIGHT)
-    oval(g, 130, XHEIGHT + 80, 44, 44)
+    dot(g, 130, XHEIGHT + 80, 44)
 
 
 def draw_j(font: ufoLib2.Font) -> None:
     g = add_glyph(font, "j", 260, 0x006A)
-    pen = g.getPen()
-    pen.moveTo((86, XHEIGHT))
-    pen.lineTo((174, XHEIGHT))
-    pen.lineTo((174, DESCENDER + 80))
-    pen.curveTo((174, DESCENDER), (86, DESCENDER), (40, DESCENDER + 40))
-    pen.lineTo((40 + HSTEM, DESCENDER + 40 + HSTEM))
-    pen.curveTo((86, DESCENDER + HSTEM), (86, DESCENDER + HSTEM), (86, DESCENDER + 80))
-    pen.lineTo((86, XHEIGHT))
-    pen.closePath()
-    oval(g, 130, XHEIGHT + 80, 44, 44)
+    # Stem and hook are one stroke, the mirror of l's tail turned down: the stem
+    # runs to the descender, turns left on a constant radius and rises into a
+    # level-cut terminal that stays clear of the baseline.
+    LOW = DESCENDER + HSTEM / 2
+    R = 80.0
+    stroke(g, spline([
+        (130, XHEIGHT,   270.0, None, None),
+        (130, LOW + R,   270.0, None, K_CIRCLE * R),
+        (130 - R, LOW,   180.0, K_CIRCLE * R, 40.0),
+        (54, -108,       112.0, 40.0, None),
+    ]), VSTEM, HSTEM, cap0=0.0)
+    dot(g, 130, XHEIGHT + 80, 44)
 
 
 def draw_k(font: ufoLib2.Font) -> None:
@@ -1194,21 +1206,22 @@ def draw_m(font: ufoLib2.Font) -> None:
     mid_l = 430 - VSTEM_TIGHT // 2      # 388
     mid_r = 430 + VSTEM_TIGHT // 2      # 472
     a1, a2 = apex_end(148, mid_l), apex_end(mid_r, 712)
+    XC, YC = 430, XHEIGHT - 30          # the notch between the two humps, on top
     pen = g.getPen()
     pen.moveTo((60, 0))
     pen.lineTo((148, 0))
-    pen.lineTo((148, y_in))
-    pen.lineTo((a1, y_in))
-    curve_down(pen, a1, y_in, mid_l, knee)
+    arch_start(pen, 148, y_in, a1)
+    curve_down(pen, max(a1, 192), y_in, mid_l, knee)
     pen.lineTo((mid_l, 0))
     pen.lineTo((mid_r, 0))
-    pen.lineTo((mid_r, y_in))
-    pen.lineTo((a2, y_in))
-    curve_down(pen, a2, y_in, 712, knee)
+    arch_start(pen, mid_r, y_in, a2)
+    curve_down(pen, max(a2, mid_r + 44), y_in, 712, knee)
     pen.lineTo((712, 0))
     pen.lineTo((800, 0))
     pen.lineTo((800, knee))
-    curve_up(pen, 800, knee, a2, XHEIGHT)
+    curve_up(pen, 800, knee, max(a2, mid_r + 44), XHEIGHT)
+    pen.curveTo((mid_r + 24, XHEIGHT), (XC + 22, YC + 26), (XC, YC))  # into the notch
+    pen.curveTo((XC - 22, YC + 26), (XC - 130, XHEIGHT), (XC - 262, XHEIGHT))
     pen.lineTo((60, XHEIGHT))
     pen.closePath()
 
@@ -1329,13 +1342,23 @@ def draw_t(font: ufoLib2.Font) -> None:
 
 def draw_u(font: ufoLib2.Font) -> None:
     g = add_glyph(font, "u", 570, 0x0075)
-    # u is n rotated 180°, which is the classic relationship and guarantees the
-    # two letters carry identical shoulder weight and curvature. Rotating rather
-    # than only mirroring vertically keeps the straight stem on the right, where
-    # u wants it.
-    n_shape(g, 60, 510, XHEIGHT)
-    flip_y(g, XHEIGHT / 2)
-    flip_x(g, 570 / 2)
+    # Not n rotated 180°: n's counter has a flat ceiling with a curve down into
+    # only the right stem, which is correct for a shape sitting under a fixed
+    # x-height line but turns into a lopsided notch when flipped to form a floor
+    # — the flat side reads as a step instead of the round bowl a u needs. Built
+    # instead as one centreline stroke, stem-turn-stem, the same way draw_U's
+    # bottom turn is built, so both sides of the bowl curve evenly.
+    L, R = 104.0, 466.0                 # the stems' centrelines
+    BOT = -OVS + HSTEM / 2              # the turn's centreline at its lowest
+    TURN = 231.0                        # where the sides stop curving
+    RX, RY = (R - L) / 2, TURN - BOT
+    stroke(g, spline([
+        (L, XHEIGHT, 270.0, None, None),
+        (L, TURN,    270.0, None, K_CIRCLE * RY),
+        (L + RX, BOT, 0.0, K_CIRCLE * RX, K_CIRCLE * RX),
+        (R, TURN,     90.0, K_CIRCLE * RY, None),
+        (R, XHEIGHT,  90.0, None, None),
+    ]), VSTEM, HSTEM)
 
 
 def draw_v(font: ufoLib2.Font) -> None:
@@ -1362,17 +1385,16 @@ def draw_x(font: ufoLib2.Font) -> None:
 
 
 def draw_y(font: ufoLib2.Font) -> None:
-    g = add_glyph(font, "y", 510, 0x0079)
-    # A v whose vertex is buried in the descender stem, so the join is covered.
-    vee(g, 0, XHEIGHT, 255, 44, 510, XHEIGHT)
-    pen = g.getPen()
-    pen.moveTo((299, 120))
-    pen.lineTo((299, DESCENDER))
-    pen.curveTo((299, DESCENDER - 40), (200, DESCENDER - 60), (130, DESCENDER - 20))
-    pen.lineTo((130, DESCENDER - 20 + HSTEM))
-    pen.curveTo((190, DESCENDER - 20 + HSTEM), (211, DESCENDER + HSTEM), (211, DESCENDER))
-    pen.lineTo((211, 120))
-    pen.closePath()
+    g = add_glyph(font, "y", 556, 0x0079)
+    # Two diagonals. The short one comes down from the upper left and stops in the
+    # long one; the long one runs on past the baseline and curls out to the left in
+    # a tail, all on one centreline so the weight does not change along the turn.
+    stroke(g, spline([
+        (500, XHEIGHT, 246.0, None, None),
+        (215, -110,    240.0, None, 70.0),
+        (100, DESCENDER + 40, 175.0, 70.0, None),
+    ]), VSTEM - 6, HSTEM)
+    band(g, 40, XHEIGHT, 305, 95)
 
 
 def draw_z(font: ufoLib2.Font) -> None:
@@ -1404,54 +1426,44 @@ def draw_A(font):
     # have moved furthest inward.
     rect(g, 170, 260, 510, 336)
 
+def bowl_stroke(g, x_left, x_far, y_top, y_bot, flat, cap=True):
+    """A closed-on-the-right bowl: one centreline that leaves the stem along the
+    top, turns down the far side and comes back along the bottom, both ends buried
+    in the stem. ``x_far`` is the far side's centreline and ``flat`` how far the top
+    and bottom run straight before the turn starts."""
+    mid = (y_top + y_bot) / 2
+    ry = (y_top - y_bot) / 2
+    rx = flat
+    stroke(g, spline([
+        (x_left,        y_top, 0.0,   None, None),
+        (x_far - rx,    y_top, 0.0,   None, K_CIRCLE * rx),
+        (x_far,         mid,   270.0, K_CIRCLE * ry, K_CIRCLE * ry),
+        (x_far - rx,    y_bot, 180.0, K_CIRCLE * rx, None),
+        (x_left,        y_bot, 180.0, None, None),
+    ]), VSTEM, HSTEM)
+
+
 def draw_B(font):
     g = add_glyph(font, "B", 640, 0x0042)
     rect(g, 60, 0, 148, CAPHEIGHT)
-    pen = g.getPen()
-    for y0, y1, cx in [(0, CAPHEIGHT//2, 520), (CAPHEIGHT//2, CAPHEIGHT, 496)]:
-        mid = (y0 + y1) // 2
-        rx = cx - 148; ry = (y1 - y0) // 2
-        k = int(K_FLAT * rx); kv = int(K_SIDE * ry)
-        pen.moveTo((148 - JOIN, y0)); pen.lineTo((cx - rx, y0))
-        pen.curveTo((cx - rx + k, y0), (cx, mid - kv), (cx, mid))
-        pen.curveTo((cx, mid + kv), (cx - rx + k, y1), (cx - rx, y1))
-        pen.lineTo((148 - JOIN, y1)); pen.closePath()
-        pen.moveTo((148 - JOIN // 2, y0 + HSTEM)); pen.lineTo((cx - rx, y0 + HSTEM))
-        pen.curveTo((cx - rx + k, y0 + HSTEM), (cx - HSTEM, mid - kv + 20), (cx - HSTEM, mid))
-        pen.curveTo((cx - HSTEM, mid + kv - 20), (cx - rx + k, y1 - HSTEM), (cx - rx, y1 - HSTEM))
-        pen.lineTo((148 - JOIN // 2, y1 - HSTEM)); pen.closePath()
+    TOPC, BOTC = CAPHEIGHT - HSTEM / 2, HSTEM / 2
+    WAIST = 0.535 * CAPHEIGHT                    # the middle bar's centreline
+    bowl_stroke(g, 104, 500, TOPC, WAIST + HSTEM / 2 - 2, 190)
+    bowl_stroke(g, 104, 530, WAIST - HSTEM / 2 + 2, BOTC, 215)
 
 def draw_C(font):
-    g = add_glyph(font, "C", 620, 0x0043)
-    pen = g.getPen()
-    cx, cy, rx, ry = 310, CAPHEIGHT//2, 250, CAPHEIGHT//2 + OVS
-    k = int(K_FLAT * rx); kv = int(K_SIDE * ry)
-    pen.moveTo((cx+rx, cy+80))
-    pen.curveTo((cx+rx, cy+kv),(cx+k, cy+ry),(cx, cy+ry))
-    pen.curveTo((cx-k, cy+ry),(cx-rx, cy+kv),(cx-rx, cy))
-    pen.curveTo((cx-rx, cy-kv),(cx-k, cy-ry),(cx, cy-ry))
-    pen.curveTo((cx+k, cy-ry),(cx+rx, cy-kv),(cx+rx, cy-80))
-    pen.lineTo((cx+rx-HSTEM, cy-80))
-    pen.curveTo((cx+rx-HSTEM, cy-kv+40),(cx+k, cy-ry+HSTEM),(cx, cy-ry+HSTEM))
-    pen.curveTo((cx-k, cy-ry+HSTEM),(cx-rx+HSTEM, cy-kv),(cx-rx+HSTEM, cy))
-    pen.curveTo((cx-rx+HSTEM, cy+kv),(cx-k, cy+ry-HSTEM),(cx, cy+ry-HSTEM))
-    pen.curveTo((cx+k, cy+ry-HSTEM),(cx+rx-HSTEM, cy+kv-40),(cx+rx-HSTEM, cy+80))
-    pen.closePath()
+    g = add_glyph(font, "C", 690, 0x0043)
+    # One arc, stroked with the same nib as the stems. The terminals are cut level,
+    # which is where a grotesque cuts them; the aperture between them is what keeps
+    # C open at 11 px.
+    cx, cy = 345.0, CAPHEIGHT / 2
+    rx, ry = 285.0 - VSTEM / 2, CAPHEIGHT / 2 + OVS - HSTEM / 2
+    stroke(g, arc_spline(cx, cy, rx, ry, 42.0, 318.0), VSTEM, HSTEM, cap0=0.0, cap1=0.0)
 
 def draw_D(font):
-    g = add_glyph(font, "D", 680, 0x0044)
+    g = add_glyph(font, "D", 700, 0x0044)
     rect(g, 60, 0, 148, CAPHEIGHT)
-    pen = g.getPen()
-    cx, cy = 148, CAPHEIGHT//2; rx = 345; ry = CAPHEIGHT//2 + OVS
-    k = int(K_FLAT * rx); kv = int(K_SIDE * ry)
-    pen.moveTo((148 - JOIN, 0)); pen.lineTo((148+rx-k, 0))
-    pen.curveTo((148+rx, 0),(148+rx+k//2, cy-kv),(148+rx+k//2, cy))
-    pen.curveTo((148+rx+k//2, cy+kv),(148+rx, CAPHEIGHT),(148+rx-k, CAPHEIGHT))
-    pen.lineTo((148 - JOIN, CAPHEIGHT)); pen.closePath()
-    pen.moveTo((148 - JOIN // 2, HSTEM)); pen.lineTo((148+rx-k, HSTEM))
-    pen.curveTo((148+rx-HSTEM, HSTEM),(148+rx+k//2-HSTEM, cy-kv+20),(148+rx+k//2-HSTEM, cy))
-    pen.curveTo((148+rx+k//2-HSTEM, cy+kv-20),(148+rx-HSTEM, CAPHEIGHT-HSTEM),(148+rx-k, CAPHEIGHT-HSTEM))
-    pen.lineTo((148 - JOIN // 2, CAPHEIGHT-HSTEM)); pen.closePath()
+    bowl_stroke(g, 104, 650 - VSTEM / 2, CAPHEIGHT - HSTEM / 2, HSTEM / 2, 235)
 
 def draw_E(font):
     g = add_glyph(font, "E", 600, 0x0045)
@@ -1467,22 +1479,13 @@ def draw_F(font):
     rect(g, 148, CAPHEIGHT//2-HSTEM//2, 500, CAPHEIGHT//2+HSTEM//2)
 
 def draw_G(font):
-    g = add_glyph(font, "G", 660, 0x0047)
-    pen = g.getPen()
-    cx, cy, rx, ry = 310, CAPHEIGHT//2, 250, CAPHEIGHT//2 + OVS
-    k = int(K_FLAT * rx); kv = int(K_SIDE * ry)
-    pen.moveTo((cx+rx, cy+80))
-    pen.curveTo((cx+rx, cy+kv),(cx+k, cy+ry),(cx, cy+ry))
-    pen.curveTo((cx-k, cy+ry),(cx-rx, cy+kv),(cx-rx, cy))
-    pen.curveTo((cx-rx, cy-kv),(cx-k, cy-ry),(cx, cy-ry))
-    pen.curveTo((cx+k, cy-ry),(cx+rx, cy-kv),(cx+rx, cy-80))
-    pen.lineTo((cx+rx-HSTEM, cy-80))
-    pen.curveTo((cx+rx-HSTEM, cy-kv+40),(cx+k, cy-ry+HSTEM),(cx, cy-ry+HSTEM))
-    pen.curveTo((cx-k, cy-ry+HSTEM),(cx-rx+HSTEM, cy-kv),(cx-rx+HSTEM, cy))
-    pen.curveTo((cx-rx+HSTEM, cy+kv),(cx-k, cy+ry-HSTEM),(cx, cy+ry-HSTEM))
-    pen.curveTo((cx+k, cy+ry-HSTEM),(cx+rx-HSTEM, cy+kv-40),(cx+rx-HSTEM, cy+80))
-    pen.closePath()
-    rect(g, cx, cy-HSTEM//2, cx+rx, cy+HSTEM//2)
+    g = add_glyph(font, "G", 720, 0x0047)
+    cx, cy = 360.0, CAPHEIGHT / 2
+    rx, ry = 295.0 - VSTEM / 2, CAPHEIGHT / 2 + OVS - HSTEM / 2
+    # The arc runs round to just above the bar, where its stem stops.
+    end = math.degrees(math.asin((HSTEM / 2 - 3) / ry))
+    stroke(g, arc_spline(cx, cy, rx, ry, 42.0, 360.0 + end), VSTEM, HSTEM, cap0=0.0, cap1=0.0)
+    rect(g, round(cx + 10), round(cy - HSTEM / 2), round(cx + rx), round(cy + HSTEM / 2 - 3))
 
 def draw_H(font):
     g = add_glyph(font, "H", 680, 0x0048)
@@ -1555,47 +1558,43 @@ def draw_O(font):
 def draw_P(font):
     g = add_glyph(font, "P", 620, 0x0050)
     rect(g, 60, 0, 148, CAPHEIGHT)
-    pen = g.getPen()
-    cx = 148; cy = int(CAPHEIGHT*0.65); rx = 270; ry = int(CAPHEIGHT*0.35)
-    k = int(K_FLAT * rx); kv = int(K_SIDE * ry)
-    pen.moveTo((148 - JOIN, cy-ry)); pen.lineTo((148+rx-k, cy-ry))
-    pen.curveTo((148+rx, cy-ry),(148+rx+k//2, cy-kv),(148+rx+k//2, cy))
-    pen.curveTo((148+rx+k//2, cy+kv),(148+rx, cy+ry),(148+rx-k, cy+ry))
-    pen.lineTo((148 - JOIN, cy+ry)); pen.closePath()
-    pen.moveTo((148 - JOIN // 2, cy-ry+HSTEM)); pen.lineTo((148+rx-k, cy-ry+HSTEM))
-    pen.curveTo((148+rx-HSTEM, cy-ry+HSTEM),(148+rx+k//2-HSTEM, cy-kv+20),(148+rx+k//2-HSTEM, cy))
-    pen.curveTo((148+rx+k//2-HSTEM, cy+kv-20),(148+rx-HSTEM, cy+ry-HSTEM),(148+rx-k, cy+ry-HSTEM))
-    pen.lineTo((148 - JOIN // 2, cy+ry-HSTEM)); pen.closePath()
+    bowl_stroke(g, 104, 560 - VSTEM / 2, CAPHEIGHT - HSTEM / 2, 0.385 * CAPHEIGHT + HSTEM / 2, 170)
 
 def draw_Q(font):
     g = add_glyph(font, "Q", 720, 0x0051)
     oval(g, 360, CAPHEIGHT//2, 300, CAPHEIGHT//2 + OVS)
     oval(g, 360, CAPHEIGHT//2, 212, CAPHEIGHT//2-HSTEM + OVS, clockwise=True)
-    pen = g.getPen()
-    pen.moveTo((400, 160)); pen.lineTo((560, 0))
-    pen.lineTo((480, 0)); pen.lineTo((320, 160)); pen.closePath()
+    # The tail crosses the bowl's lower right and leaves it, cut level.
+    band(g, 385, 175, 615, -75)
 
 def draw_R(font):
     g = add_glyph(font, "R", 640, 0x0052)
     rect(g, 60, 0, 148, CAPHEIGHT)
-    pen = g.getPen()
-    cx = 148; cy = int(CAPHEIGHT*0.65); rx = 270; ry = int(CAPHEIGHT*0.35)
-    k = int(K_FLAT * rx); kv = int(K_SIDE * ry)
-    pen.moveTo((148 - JOIN, cy-ry)); pen.lineTo((148+rx-k, cy-ry))
-    pen.curveTo((148+rx, cy-ry),(148+rx+k//2, cy-kv),(148+rx+k//2, cy))
-    pen.curveTo((148+rx+k//2, cy+kv),(148+rx, cy+ry),(148+rx-k, cy+ry))
-    pen.lineTo((148 - JOIN, cy+ry)); pen.closePath()
-    pen.moveTo((148 - JOIN // 2, cy-ry+HSTEM)); pen.lineTo((148+rx-k, cy-ry+HSTEM))
-    pen.curveTo((148+rx-HSTEM, cy-ry+HSTEM),(148+rx+k//2-HSTEM, cy-kv+20),(148+rx+k//2-HSTEM, cy))
-    pen.curveTo((148+rx+k//2-HSTEM, cy+kv-20),(148+rx-HSTEM, cy+ry-HSTEM),(148+rx-k, cy+ry-HSTEM))
-    pen.lineTo((148 - JOIN // 2, cy+ry-HSTEM)); pen.closePath()
-    # The leg's upper end is cut half way into the bowl's bottom stroke.
-    band(g, 290, cy - ry + HSTEM // 2, 545, 0)
+    yb = 0.41 * CAPHEIGHT + HSTEM / 2
+    bowl_stroke(g, 104, 570 - VSTEM / 2, CAPHEIGHT - HSTEM / 2, yb, 175)
+    # The leg springs from the bowl's underside and runs out to the baseline.
+    band(g, 300, yb, 565, 0)
+
+def cap_ess(g, cx, cy, hw, hh):
+    """S built from explicit nodes: the waist is a shallow diagonal between two
+    bowls of nearly equal size, and each terminal leaves upward and inward."""
+    K = K_CIRCLE
+    y3 = 0.50 * hh
+    tx, ty, term, hterm = 0.92, 0.62, 105.0, 80.0
+    stroke(g, spline([
+        (cx + tx * hw, cy + ty * hh, term,  None,       hterm),
+        (cx,           cy + hh,      180.0, 150.0,      150.0),
+        (cx - hw,      cy + y3,      270.0, K * (hh - y3), 0.55 * y3),
+        (cx,           cy,           322.0, 145.0,      145.0),
+        (cx + hw,      cy - y3,      270.0, 0.55 * y3, K * (hh - y3)),
+        (cx,           cy - hh,      180.0, 150.0,      150.0),
+        (cx - tx * hw, cy - ty * hh, term,  hterm,      None),
+    ]), VSTEM, HSTEM)
+
 
 def draw_S(font):
-    g = add_glyph(font, "S", 580, 0x0053)
-    # Same skeleton as s, at cap size. Ink 40–580 against O's 40–616.
-    ess(g, 310, CAPHEIGHT // 2, 226, CAPHEIGHT // 2 + OVS - HSTEM / 2, VSTEM, HSTEM)
+    g = add_glyph(font, "S", 640, 0x0053)
+    cap_ess(g, 320, CAPHEIGHT // 2, 245, CAPHEIGHT // 2 + OVS - HSTEM / 2)
 
 def draw_T(font):
     g = add_glyph(font, "T", 600, 0x0054)
@@ -1684,10 +1683,10 @@ def draw_two(font):
     g = add_glyph(font, "two", 580, 0x0032)
     L, R = 80, 500
     TOP = CAPHEIGHT + OVS
-    cx, cy = (L + R) // 2, 470          # centre of the arch's ellipse
-    rx, ry = (R - L) // 2, TOP - 470
+    cx, cy = (L + R) // 2, round(CAPHEIGHT * 470 / 720)   # centre of the arch's ellipse
+    rx, ry = (R - L) // 2, TOP - cy
     RX, RY = rx - HSTEM, ry - HSTEM     # the arch's inner ellipse
-    STRAIGHT = 380                      # the right side runs down to here
+    STRAIGHT = round(CAPHEIGHT * 380 / 720)   # the right side runs down to here
     pen = g.getPen()
     # the arch: left terminal cut flat at the ellipse's widest point, over the
     # top, down the right side and on down a short straight run
@@ -1783,18 +1782,33 @@ def draw_five(font):
 
 def draw_six(font):
     g = add_glyph(font, "six", 580, 0x0036)
-    pen = g.getPen()
     cx, cy = 290, CAPHEIGHT//4; rx = 230; ry = CAPHEIGHT//4
     oval(g, cx, cy, rx, ry + OVS)
     oval(g, cx, cy, rx-HSTEM, ry-HSTEM + OVS, clockwise=True)
-    # Spine: springs off the left of the bowl and rises to a terminal at the top
-    # right. The old version put its control points above the end point, so the
-    # stroke turned over early and topped out well short of the cap line.
-    pen.moveTo((cx-rx, cy))
-    pen.curveTo((cx-rx, cy+300),(cx-70, CAPHEIGHT),(cx+120, CAPHEIGHT))
-    pen.lineTo((cx+120, CAPHEIGHT-HSTEM))
-    pen.curveTo((cx-40, CAPHEIGHT-HSTEM),(cx-rx+HSTEM, cy+280),(cx-rx+HSTEM, cy))
-    pen.closePath()
+    # The spine is one centreline stroke that leaves the bowl's left wall and
+    # rises to a level-cut terminal at the cap line. Hand-traced as a closed
+    # contour its weight wandered along the curve; the nib fixes it at 84.
+    TOPC = CAPHEIGHT - HSTEM / 2
+    stroke(g, spline([
+        (cx - rx + 42, cy,   90.0, None, K_CIRCLE * 400),
+        (cx + 120,     TOPC,  0.0, K_CIRCLE * 300, None),
+    ]), 84, HSTEM, cap1=90.0)
+
+
+def draw_nine(font):
+    # The 180-degree counterpart of six: same bowl and spine turned about the
+    # middle of the cap band, so the two cannot drift apart.
+    g = add_glyph(font, "nine", 580, 0x0039)
+    cx, cy = 290, CAPHEIGHT//4; rx = 230; ry = CAPHEIGHT//4
+    oval(g, cx, cy, rx, ry + OVS)
+    oval(g, cx, cy, rx-HSTEM, ry-HSTEM + OVS, clockwise=True)
+    TOPC = CAPHEIGHT - HSTEM / 2
+    stroke(g, spline([
+        (cx - rx + 42, cy,   90.0, None, K_CIRCLE * 400),
+        (cx + 120,     TOPC,  0.0, K_CIRCLE * 300, None),
+    ]), 84, HSTEM, cap1=90.0)
+    flip_y(g, CAPHEIGHT / 2)
+    flip_x(g, 290)
 
 def draw_seven(font):
     g = add_glyph(font, "seven", 580, 0x0037)
@@ -1805,11 +1819,17 @@ def draw_seven(font):
     pen.lineTo((80, CAPHEIGHT-HSTEM)); pen.closePath()
 
 def draw_eight(font):
-    g = add_glyph(font, "eight", 580, 0x0038)
-    top = int(CAPHEIGHT*0.28)
-    for cy, ry in [(CAPHEIGHT - top, top + OVS), (top, top + OVS)]:
-        oval(g, 290, cy, 200, ry)
-        oval(g, 290, cy, 200-HSTEM, ry-HSTEM + OVS, clockwise=True)
+    g = add_glyph(font, "eight", 620, 0x0038)
+    # Two rings stacked so that the upper one's bottom bar and the lower one's top
+    # bar land on the same band and merge into one waist. Each ring is an outer
+    # and an inner oval one stroke apart, which keeps the walls even all round.
+    top_c = CAPHEIGHT + OVS - HSTEM / 2       # centrelines of the top and bottom
+    bot_c = -OVS + HSTEM / 2
+    waist = 0.53 * CAPHEIGHT
+    for cy_lo, cy_hi, rx_c in [(waist - 2, top_c, 158), (bot_c, waist + 2, 182)]:
+        cy, ry_c = (cy_lo + cy_hi) / 2, (cy_hi - cy_lo) / 2
+        oval(g, 310, cy, rx_c + VSTEM // 2, round(ry_c + HSTEM / 2))
+        oval(g, 310, cy, rx_c - VSTEM // 2, round(ry_c - HSTEM / 2), clockwise=True)
 
 def draw_nine(font):
     g = add_glyph(font, "nine", 580, 0x0039)
@@ -1860,21 +1880,17 @@ def draw_punctuation(font):
     rect(g, 96, 160, 184, CAPHEIGHT)
     dot(g, 140, 60, 55)
 
-    # question
+    # question. One centreline: the hook over the top, down the right, and into a
+    # stem that stops well above the dot.
     g = add_glyph(font, "question", 520, 0x003F)
-    oval(g, 260, 60, 55, 55)
-    pen = g.getPen()
-    pen.moveTo((216, 220)); pen.lineTo((216, 300))
-    pen.curveTo((216, 380),(160, 420),(160, 500))
-    pen.curveTo((160, 580),(220, CAPHEIGHT),(320, CAPHEIGHT))
-    pen.curveTo((420, CAPHEIGHT),(480, 580),(480, 500))
-    pen.curveTo((480, 440),(440, 400),(380, 380))
-    pen.lineTo((380, 300)); pen.lineTo((304, 300)); pen.lineTo((304, 380))
-    pen.curveTo((340, 396),(392, 420),(392, 500))
-    pen.curveTo((392, 560),(360, CAPHEIGHT-HSTEM),(320, CAPHEIGHT-HSTEM))
-    pen.curveTo((280, CAPHEIGHT-HSTEM),(248, 560),(248, 500))
-    pen.curveTo((248, 440),(304, 400),(304, 300))
-    pen.lineTo((304, 220)); pen.closePath()
+    dot(g, 262, 60, 55)
+    stroke(g, spline([
+        (112, 548, 90.0,  None, 60.0),
+        (255, CAPHEIGHT + OVS - HSTEM / 2, 0.0, 100.0, 100.0),
+        (398, 555, 270.0, 95.0, 90.0),
+        (268, 380, 215.0, 85.0, 50.0),
+        (262, 232, 270.0, 50.0, None),
+    ]), VSTEM, HSTEM)
 
     # hyphen-minus
     g = add_glyph(font, "hyphen", 340, 0x002D)
@@ -1901,19 +1917,15 @@ def draw_punctuation(font):
     PAREN_TOP, PAREN_BOT = CAPHEIGHT + 60, -60
     for name, cp, mirror in [("parenleft",0x0028,False),("parenright",0x0029,True)]:
         g = add_glyph(font, name, 340, cp)
-        pen = g.getPen()
-        # The terminals were 34 units across against 88 at the middle, so both
-        # parens tapered to a hair and dropped out at text sizes. Helvetica's are
-        # 61 across the tip and 93 at the middle; these are 62 and 88, and the
-        # outer control moves to x=0 so the bow is as deep as the aperture wants.
-        x_out, x_in = 260, 198           # terminal, outer and inner edge
-        xc_out, xc_in = 0, 138           # control x: sets the mid-height weight
-        ky = int((PAREN_TOP - PAREN_BOT) * 0.30)
-        pen.moveTo((x_out, PAREN_TOP))
-        pen.curveTo((xc_out, PAREN_TOP - ky), (xc_out, PAREN_BOT + ky), (x_out, PAREN_BOT))
-        pen.lineTo((x_in, PAREN_BOT))
-        pen.curveTo((xc_in, PAREN_BOT + ky), (xc_in, PAREN_TOP - ky), (x_in, PAREN_TOP))
-        pen.closePath()
+        # One arc of a tall ellipse, stroked with the stem nib so the weight holds
+        # from tip to tip. The bow is 120 deep on the centreline; the right paren is
+        # the left mirrored, so the two cannot drift apart.
+        theta = 42.0
+        ry = (PAREN_TOP - PAREN_BOT) / 2 / math.sin(math.radians(theta))
+        rx = 120.0 / (1 - math.cos(math.radians(theta)))
+        left = 112.0
+        stroke(g, arc_spline(left + rx, (PAREN_TOP + PAREN_BOT) / 2, rx, ry,
+                             180.0 - theta, 180.0 + theta), VSTEM_TIGHT, HSTEM)
         if mirror:
             flip_x(g, 170)
 
@@ -1932,25 +1944,24 @@ def draw_punctuation(font):
     # of inward. Drawn once and mirrored.
     for name, cp, mirror in [("braceleft",0x007B,False),("braceright",0x007D,True)]:
         g = add_glyph(font, name, 340, cp)
-        cx = 170
-        pen = g.getPen()
         TOP, BOT = PAREN_TOP, PAREN_BOT
-        mid = (TOP + BOT) // 2
-        pen.moveTo((cx+100, TOP))
-        pen.curveTo((cx+40, TOP),(cx-20, TOP-60),(cx-20, TOP-120))
-        pen.lineTo((cx-20, mid+60))
-        pen.curveTo((cx-20, mid+20),(cx-80, mid),(cx-120, mid))
-        pen.curveTo((cx-80, mid),(cx-20, mid-20),(cx-20, mid-60))
-        pen.lineTo((cx-20, BOT+120))
-        pen.curveTo((cx-20, BOT+60),(cx+40, BOT),(cx+100, BOT))
-        pen.lineTo((cx+100, BOT+HSTEM))
-        pen.curveTo((cx+60, BOT+HSTEM),(cx-20+HSTEM, BOT+80),(cx-20+HSTEM, BOT+120))
-        pen.lineTo((cx-20+HSTEM, mid-60))
-        pen.curveTo((cx-20+HSTEM, mid-30),(cx-60, mid),(cx-100, mid))
-        pen.curveTo((cx-60, mid),(cx-20+HSTEM, mid+30),(cx-20+HSTEM, mid+60))
-        pen.lineTo((cx-20+HSTEM, TOP-120))
-        pen.curveTo((cx-20+HSTEM, TOP-80),(cx+60, TOP-HSTEM),(cx+100, TOP-HSTEM))
-        pen.closePath()
+        mid = (TOP + BOT) / 2
+        XS, TIP, XT = 190.0, 62.0, 265.0          # stem, tip and terminal centrelines
+        # Each half is one stroke — terminal, turn, straight stem, turn into the
+        # tip — and the lower half is the upper mirrored about mid, so the two meet
+        # at a flat-cut tip of one nib's height instead of the hairline spike the
+        # hand-traced outline pinched to.
+        for sign in (1, -1):
+            def Y(v, sign=sign):
+                return mid + sign * (v - mid)
+            TT = TOP - HSTEM / 2
+            ang = (lambda a: a) if sign == 1 else (lambda a: -a % 360.0)
+            stroke(g, spline([
+                (XT,  Y(TT),        ang(180.0), None,               K_CIRCLE * (XT - XS)),
+                (XS,  Y(TT - 100),  ang(270.0), K_CIRCLE * 100,     None),
+                (XS,  Y(mid + 100), ang(270.0), None,               K_CIRCLE * 100),
+                (TIP, Y(mid),       ang(180.0), K_CIRCLE * (XS - TIP), None),
+            ]), 84, 72)
         if mirror:
             flip_x(g, 170)
 
@@ -2043,7 +2054,7 @@ def draw_punctuation(font):
     ]), VSTEM, HSTEM)
     stroke(g, spline([                            # the diagonal
         (330, 420, -50.0, None, None),
-        (490, 215, -60.0, None, None),
+        (535, 140, -60.0, None, None),
     ]), VSTEM, HSTEM)
     stroke(g, spline([                            # the leg
         (505, 340, 255.0, None, None),
@@ -2203,13 +2214,13 @@ def draw_marks(font):
             pen.curveTo((80, CAPHEIGHT+80+HSTEM),(-80, CAPHEIGHT+80+HSTEM),(-80, CAPHEIGHT+160+HSTEM))
             pen.closePath()
         elif kind == 6:  # dot above
-            oval(g, 0, CAPHEIGHT+120, 44, 44)
+            dot(g, 0, CAPHEIGHT+120, 44)
         elif kind == 7:  # diaeresis
-            oval(g, -60, CAPHEIGHT+120, 40, 40)
-            oval(g, 60, CAPHEIGHT+120, 40, 40)
+            dot(g, -60, CAPHEIGHT+120, 40)
+            dot(g, 60, CAPHEIGHT+120, 40)
         elif kind == 8:  # ring above
-            oval(g, 0, CAPHEIGHT+140, 55, 55)
-            oval(g, 0, CAPHEIGHT+140, 20, 20, clockwise=True)
+            dot(g, 0, CAPHEIGHT+140, 55)
+            dot(g, 0, CAPHEIGHT+140, 20, clockwise=True)
         elif kind == 9:  # double acute
             for dx in [-50, 50]:
                 pen = g.getPen()
@@ -2742,7 +2753,9 @@ def draw_special_letters(font):
     # æ  — a and e sharing a stem
     a, e = ink(font, "a"), ink(font, "e")
     if a and e:
-        join = (a[2] - a[0]) - VSTEM - JOIN
+        # e's left wall lands on a's stem, so the two share one stem's weight
+        # instead of stacking an extra JOIN units of ink beside it.
+        join = (a[2] - a[0]) - VSTEM + 4
         g = add_glyph(font, "ae", round(60 + join + (e[2] - e[0]) + 50), 0x00E6)
         copy_outline(font, g, "a", dx=60 - a[0])
         copy_outline(font, g, "e", dx=60 + join - e[0])
@@ -2771,15 +2784,25 @@ def draw_special_letters(font):
             rect(g, round(D[0] - 44), y - (HSTEM - 10) // 2,
                  round(D[0] + VSTEM + 70), y + (HSTEM - 10) // 2)
 
-    # ð đ  — d with a stroke across the ascender
+    # đ  — d with a stroke across the ascender
     d = ink(font, "d")
     if d:
         stem_x1 = d[2]
-        for name, cp in [("eth", 0x00F0), ("dcroat", 0x0111)]:
-            g = add_glyph(font, name, font["d"].width, cp)
-            copy_outline(font, g, "d")
-            y = ASCENDER - 130
-            rect(g, round(stem_x1 - VSTEM - 66), y, round(stem_x1 + 44), y + HSTEM - 14)
+        g = add_glyph(font, "dcroat", font["d"].width, 0x0111)
+        copy_outline(font, g, "d")
+        y = ASCENDER - 130
+        rect(g, round(stem_x1 - VSTEM - 66), y, round(stem_x1 + 44), y + HSTEM - 14)
+
+    # ð  — a q-style bowl whose stem leans over at the top into a left-pointing
+    # hook, crossed by a bar. Without the hook it is identical to đ.
+    g = add_glyph(font, "eth", font["d"].width, 0x00F0)
+    bowl(g, 422, 60, 270, 270 + OVS)
+    stroke(g, spline([
+        (466, 0,    90.0, None, None),
+        (466, 620,  90.0, None, 70),
+        (325, ASCENDER - HSTEM / 2 - 6, 180.0, 90, None),
+    ]), VSTEM, HSTEM)
+    rect(g, 380, 572, 560, 572 + HSTEM - 14)
 
     # Þ  — a stem with a bowl in the middle of the cap band
     g = add_glyph(font, "Thorn", 600, 0x00DE)
@@ -2808,8 +2831,10 @@ def draw_special_letters(font):
         pen.closePath()
 
     # Ł ł  — L and l with a diagonal stroke across the stem
-    for name, cp, base, y in [("Lslash", 0x0141, "L", int(CAPHEIGHT * 0.42)),
-                              ("lslash", 0x0142, "l", int(XHEIGHT * 0.72))]:
+    # ł's bar sits at mid x-height and rises steeply. Higher and flatter, it sits
+    # where t's crossbar does and, with l's tail matching t's foot, ł reads as t.
+    for name, cp, base, y, rise in [("Lslash", 0x0141, "L", int(CAPHEIGHT * 0.42), 90),
+                                    ("lslash", 0x0142, "l", int(XHEIGHT * 0.46), 120)]:
         b = ink(font, base)
         if not b:
             continue
@@ -2818,7 +2843,6 @@ def draw_special_letters(font):
         pen = g.getPen()
         x0 = b[0] - 46
         x1 = b[0] + VSTEM + 56
-        rise = 90
         pen.moveTo((x0, y)); pen.lineTo((x1, y + rise))
         pen.lineTo((x1, y + rise - (HSTEM - 10))); pen.lineTo((x0, y - (HSTEM - 10)))
         pen.closePath()
@@ -2838,32 +2862,37 @@ def draw_special_letters(font):
         y = ASCENDER - 130
         rect(g, round(h[0] - 46), y, round(h[0] + VSTEM + 56), y + HSTEM - 14)
 
-    # ß ẞ  — a hooked left stem with two bowls on the right
-    for name, cp, top, bar in [("germandbls", 0x00DF, ASCENDER, XHEIGHT),
-                               ("uni1E9E", 0x1E9E, CAPHEIGHT, CAPHEIGHT)]:
+    # ß ẞ  — a stem that arches over into an upper bowl, a waist, and a wider
+    # lower bowl that ends in a terminal at the lower left. The hand-traced version
+    # was two half-bowls on a hooked stem, which is a B; the terminal that leaves
+    # the lower bowl open is what makes it an eszett. Stem and bowls are centreline
+    # strokes so the weight cannot wander, and both bowls bury their starts in the
+    # stem.
+    for name, cp, top in [("germandbls", 0x00DF, ASCENDER),
+                          ("uni1E9E", 0x1E9E, CAPHEIGHT)]:
         g = add_glyph(font, name, 620, cp)
-        x0, x1 = 60, 60 + VSTEM
-        if name == "germandbls":
-            # the long-s hook, the same shape as f's
-            pen = g.getPen()
-            HTOP = top + OVS
-            pen.moveTo((x0, 0))
-            pen.lineTo((x0, top - 110))
-            pen.curveTo((x0, HTOP - 40), (x0 + 40, HTOP), (155, HTOP))
-            pen.curveTo((205, HTOP), (240, HTOP - 40), (245, top - 130))
-            pen.lineTo((245 - HSTEM + 14, top - 130))
-            pen.curveTo((181, top - 90), (190, HTOP - HSTEM), (155, HTOP - HSTEM))
-            pen.curveTo((151, HTOP - HSTEM), (x1, HTOP - 100), (x1, top - 110))
-            pen.lineTo((x1, 0))
-            pen.closePath()
-        else:
-            rect(g, x0, 0, x1, top)
-        # Two bowls as on a B, the lower one wider, overlapping in the middle so
-        # they merge into one outline.
-        half_bowl(g, x1, bar // 2 - 20, bar + OVS, x1 + 230)
-        half_bowl(g, x1, -OVS, bar // 2 + 20, x1 + 270)
-        # the outstroke at the foot, which is what keeps ß from reading as a B
-        rect(g, x1 + 210, 0, x1 + 330, HSTEM)
+        SX = 60 + VSTEM / 2                     # the stem's centreline
+        TOPC = top + OVS - HSTEM / 2            # the arch's centreline at its highest
+        BOT = -OVS + HSTEM / 2
+        WAIST = 0.53 * top
+        MID_U = (TOPC + WAIST) / 2
+        MID_L = (WAIST + BOT) / 2
+        YS = TOPC - 200
+        rect(g, 60, 0, 60 + VSTEM, round(YS))
+        stroke(g, spline([                      # stem, arch, upper bowl, back to the stem
+            (SX,    YS,     90.0, None, K_CIRCLE * (TOPC - YS)),
+            (250,   TOPC,    0.0, K_CIRCLE * (250 - SX), K_CIRCLE * 140),
+            (390,   MID_U, 270.0, K_CIRCLE * (TOPC - MID_U), K_CIRCLE * (MID_U - WAIST)),
+            (250,   WAIST, 180.0, K_CIRCLE * 140, K_CIRCLE * 100),
+            (SX,    WAIST, 180.0, K_CIRCLE * 100, None),
+        ]), VSTEM, HSTEM)
+        stroke(g, spline([                      # lower bowl and its terminal
+            (SX,    WAIST,   0.0, None, K_CIRCLE * 170),
+            (300,   WAIST,   0.0, K_CIRCLE * 170, K_CIRCLE * 170),
+            (478,   MID_L, 270.0, K_CIRCLE * (WAIST - MID_L), K_CIRCLE * (MID_L - BOT)),
+            (310,   BOT,   180.0, K_CIRCLE * 168, K_CIRCLE * 60),
+            (225,   BOT + 42, 150.0, K_CIRCLE * 60, None),
+        ]), VSTEM, HSTEM)
 
     # ı ȷ  — the dotless forms, taken from i and j minus the dot
     no_dot = lambda b: b[3] < XHEIGHT + 40
@@ -2960,80 +2989,196 @@ def draw_accented2(font):
 # flat stems, and the round/diagonal terminals that leave a hole above the
 # baseline. Left groups are the closing side of a pair, right groups the opening
 # side, following the UFO3 public.kern1/public.kern2 convention.
-KERN_GROUPS: dict[str, list[str]] = {
-    "public.kern1.T":      ["T"],
-    "public.kern1.VWY":    ["V", "W", "Y"],
-    "public.kern1.FP":     ["F", "P"],
-    "public.kern1.r":      ["r"],
-    "public.kern1.y":      ["v", "w", "y"],
-    "public.kern1.quote":  ["quoteright", "quotedblright", "quoteleft", "quotedblleft"],
-    "public.kern1.A":      ["A"],
-    "public.kern1.L":      ["L"],
-    # A glyph may sit in only one kern2 group, so there is no separate "round"
-    # group: o, e and c are already here, and the pairs that want them use this.
-    "public.kern2.a":      ["a", "c", "d", "e", "g", "o", "q", "s"],
-    "public.kern2.period": ["period", "comma", "quotesinglbase", "quotedblbase"],
-    "public.kern2.A":      ["A"],
-    "public.kern2.VWY":    ["V", "W", "Y"],
-    "public.kern2.T":      ["T"],
-}
-
-KERN_PAIRS: dict[tuple[str, str], int] = {
-    # Capitals with an overhanging arm or diagonal over a following round.
-    ("public.kern1.T",     "public.kern2.a"):      -70,
-    ("public.kern1.T",     "public.kern2.A"):      -60,
-    ("public.kern1.T",     "public.kern2.period"): -80,
-    ("public.kern1.VWY",   "public.kern2.a"):      -50,
-    ("public.kern1.VWY",   "public.kern2.A"):      -55,
-    ("public.kern1.VWY",   "public.kern2.period"): -70,
-    ("public.kern1.FP",    "public.kern2.a"):      -30,
-    ("public.kern1.FP",    "public.kern2.A"):      -50,
-    ("public.kern1.FP",    "public.kern2.period"): -70,
-    ("public.kern1.A",     "public.kern2.VWY"):    -55,
-    ("public.kern1.A",     "public.kern2.T"):      -60,
-    # L's foot leaves a hole under a following diagonal or T arm. These two were
-    # only in the hand-written kern.fea, which ufo2ft was discarding wholesale
-    # because it had no insertion marker; they belong in kerning.plist with the
-    # rest so there is one source of truth.
-    ("public.kern1.L",     "public.kern2.VWY"):    -60,
-    ("public.kern1.L",     "public.kern2.T"):      -60,
-    ("f",                  "i"):                   -20,
-    # Lowercase r and the diagonals leave a gap before a full stop or comma.
-    ("public.kern1.r",     "public.kern2.period"): -60,
-    ("public.kern1.y",     "public.kern2.period"): -55,
-    ("public.kern1.r",     "public.kern2.a"):      -20,
-    # Quotes sit high; pull them into the following letter.
-    ("public.kern1.quote", "public.kern2.a"):      -30,
-    ("public.kern1.quote", "public.kern2.A"):      -50,
-}
-
-
 def set_kerning(font: ufoLib2.Font) -> int:
-    """Install the starter kerning groups and pairs, dropping absent glyphs."""
-    groups = dict(font.groups)
-    for name, members in KERN_GROUPS.items():
-        present = [m for m in members if m in font]
-        if present:
-            groups[name] = present
-    font.groups = groups
+    """Install the class-based kerning from tools/kerning.py."""
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+    import kerning
+    return kerning.apply(font)
 
-    kerning = dict(font.kerning)
-    for (first, second), value in KERN_PAIRS.items():
-        # A pair whose group ended up empty would compile to a dangling
-        # reference, so only keep pairs both of whose sides survived.
-        if first.startswith("public.kern") and first not in groups:
+
+def tidy_contours(font: ufoLib2.Font, sliver: float = 4.0) -> int:
+    """Round outlines to whole units and drop sliver line segments.
+
+    Boolean union leaves closing segments a unit or two long. Derived masters round
+    them differently, so one master keeps the segment and another collapses it and
+    the two stop interpolating. Removing them here gives every master one structure.
+    """
+    removed = 0
+    for g in font:
+        for c in g.contours:
+            for p in c.points:
+                p.x, p.y = round(p.x), round(p.y)
+            changed = True
+            while changed and len(c.points) > 3:
+                changed = False
+                pts = c.points
+                on = [i for i, p in enumerate(pts) if p.type is not None]
+                for k, i in enumerate(on):
+                    p = pts[i]
+                    q = pts[on[k - 1]]
+                    if p.type == "line" and math.hypot(p.x - q.x, p.y - q.y) < sliver:
+                        del pts[i]
+                        removed += 1
+                        changed = True
+                        break
+    return removed
+
+
+# ---------------------------------------------------------------------------
+# Feature glyphs: stylistic alternates, case forms, figure styles, fractions
+# ---------------------------------------------------------------------------
+
+FIG_NAMES = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+SMALL_FIG_SCALE = 0.66          # numerators, denominators, superiors, inferiors
+CASE_LIFT = (CAPHEIGHT - XHEIGHT) // 2
+CASE_GLYPHS = ["hyphen", "endash", "emdash", "guillemotleft", "guillemotright",
+               "guilsinglleft", "guilsinglright", "periodcentered", "bullet"]
+PNUM_SIDEBEARING = 50
+
+
+def draw_oldstyle_figures(font: ufoLib2.Font) -> None:
+    """Old-style figures (onum): 0 1 2 at x-height, 6 8 rising, 3 4 5 7 9 descending.
+
+    Each figure is drawn again by its own draw function with the cap height set to
+    the height that figure needs, so strokes keep their weight and only the
+    proportions change. One is the lining one squeezed to x-height: its flag is
+    hand-placed, so it does not take a height parameter.
+    """
+    global CAPHEIGHT
+    saved = CAPHEIGHT
+    tmp = ufoLib2.Font()
+    #        name     draw fn      cap height   shift
+    specs = [("zero", draw_zero, XHEIGHT, 0), ("two", draw_two, XHEIGHT, 0),
+             ("three", draw_three, 730, -190), ("four", draw_four, 730, -190),
+             ("five", draw_five, 730, -190), ("six", draw_six, 730, 0),
+             ("seven", draw_seven, 730, -190), ("eight", draw_eight, 730, 0),
+             ("nine", draw_nine, 730, -190)]
+    try:
+        for name, fn, cap, dy in specs:
+            CAPHEIGHT = cap
+            fn(tmp)
+            CAPHEIGHT = saved
+            g = add_glyph(font, name + ".onum", tmp[name].width, None)
+            copy_outline(tmp, g, name, dy=dy)
+    finally:
+        CAPHEIGHT = saved
+    g = add_glyph(font, "one.onum", font["one"].width, None)
+    copy_outline(font, g, "one", sy=XHEIGHT / saved)
+    for n in FIG_NAMES:
+        g = font[n + ".onum"]
+        b = ink(font, n + ".onum")
+        sb = PNUM_SIDEBEARING - (4 if n == "one" else 0)
+        shift_x(g, sb - b[0])
+        g.width = round(b[2] - b[0] + 2 * sb)
+
+
+def draw_alternates(font: ufoLib2.Font) -> None:
+    """Glyphs that only the OpenType features reach.
+
+    ss01 single-storey a (with the accented a's), ss02 straight-tail l, ss03 flat-top
+    three, cv01 slashed zero, case-sensitive punctuation, tabular/proportional
+    figures, small figures for frac/numr/dnom/sups/subs, and the vulgar fractions.
+    """
+    # ss01: an alternate for every glyph that is an a plus marks.
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+    import finalize
+    finalize.ss01_alternates(font)
+
+    # ss02: l without the tail. Same construction as i's stem, ascender high.
+    g = add_glyph(font, "l.ss02", 208, None)
+    rect(g, 60, 0, 60 + VSTEM, ASCENDER)
+
+    # ss03: three with a flat top, a bar and a diagonal into the lower bowl.
+    g = add_glyph(font, "three.ss03", 580, None)
+    TOP, BOT = CAPHEIGHT + OVS, -OVS
+    ry_lo = 215
+    cy_lo = BOT + ry_lo
+    rect(g, 100, CAPHEIGHT - HSTEM, 500, CAPHEIGHT)
+    band(g, 480, CAPHEIGHT - HSTEM // 2, 285, cy_lo + ry_lo - HSTEM // 2)
+    arc_stroke(g, 290, cy_lo, 210, ry_lo, VSTEM, HSTEM, 90, -184)
+
+    # cv01: zero with a slash through it, for places where 0 and O must differ.
+    z = ink(font, "zero")
+    if z:
+        g = add_glyph(font, "zero.cv01", font["zero"].width, None)
+        copy_outline(font, g, "zero")
+        cx = (z[0] + z[2]) / 2
+        band(g, cx - 130, 130, cx + 130, CAPHEIGHT - 130, weight=HSTEM)
+
+    # cv02: four with the diagonal stopping short of the stem, so the top is open.
+    BAR = CAPHEIGHT // 3
+    g = add_glyph(font, "four.cv02", 580, None)
+    rect(g, 372, 0, 460, CAPHEIGHT)
+    rect(g, 60, BAR - HSTEM // 2, 500, BAR + HSTEM // 2)
+    band(g, 288, CAPHEIGHT, 115, BAR)
+
+    # Case-sensitive forms: dashes, guillemets and dots raised to the middle of
+    # the capital band, where they belong beside capitals and figures.
+    for name in CASE_GLYPHS:
+        if name in font:
+            g = add_glyph(font, name + ".case", font[name].width, None)
+            component(g, name, 0, CASE_LIFT)
+
+    # Figures. The base figures become proportional (the brief's default) and the
+    # tabular forms move to .tnum, which the tnum feature and the OS's tables use.
+    for n in FIG_NAMES:
+        if n not in font:
             continue
-        if second.startswith("public.kern") and second not in groups:
-            continue
-        kerning[(first, second)] = value
-    font.kerning = kerning
-    return len(kerning)
+        src = font[n]
+        tab = add_glyph(font, n + ".tnum", src.width, None)
+        copy_outline(font, tab, n)
+        b = ink(font, n)
+        sb = PNUM_SIDEBEARING - (4 if n == "one" else 0)
+        shift_x(src, sb - b[0])
+        src.width = round(b[2] - b[0] + 2 * sb)
+        tab_adv = tab.width  # noqa: F841
+    draw_oldstyle_figures(font)
+
+    def small(suffix: str, dy: float) -> None:
+        for n in FIG_NAMES:
+            if n in font:
+                g = add_glyph(font, f"{n}.{suffix}", round(font[n].width * SMALL_FIG_SCALE), None)
+                component(g, n, 0, dy, SMALL_FIG_SCALE)
+
+    top_dy = CAPHEIGHT * (1 - SMALL_FIG_SCALE)
+    small("numr", top_dy)
+    small("dnom", 0)
+    small("sups", top_dy)
+    small("subs", -110)
+
+    # The fraction bar overhangs both neighbours so numerator and denominator tuck
+    # against it, and the vulgar fractions are numerator + bar + denominator.
+    g = add_glyph(font, "fraction", 130, 0x2044)
+    band(g, -90, -40, 220, CAPHEIGHT + 20, weight=62)
+    frac_w = font["fraction"].width
+
+    def vulgar(name, cp, num, den):
+        wn = font[f"{num}.numr"].width
+        wd = font[f"{den}.dnom"].width
+        g = add_glyph(font, name, wn + frac_w + wd, cp)
+        component(g, f"{num}.numr", 0, 0)
+        component(g, "fraction", wn, 0)
+        component(g, f"{den}.dnom", wn + frac_w, 0)
+
+    vulgar("onehalf", 0x00BD, "one", "two")
+    vulgar("onequarter", 0x00BC, "one", "four")
+    vulgar("threequarters", 0x00BE, "three", "four")
+    for name, cp, fig in [("onesuperior", 0x00B9, "one"), ("twosuperior", 0x00B2, "two"),
+                          ("threesuperior", 0x00B3, "three")]:
+        g = add_glyph(font, name, font[f"{fig}.sups"].width, cp)
+        component(g, f"{fig}.sups")
 
 
 def main():
     import os, sys, subprocess
     ufo_path = "sources/sabas-ui/SabasUI-Regular.ufo"
     font = ufoLib2.Font.open(ufo_path)
+
+    # Brief §4.2: hhea mirrors the typo metrics exactly. Unset, ufo2ft falls back
+    # to the winAscent-derived defaults (1000 / -200 / 0).
+    font.info.openTypeHheaAscender = 800
+    font.info.openTypeHheaDescender = -200
+    font.info.openTypeHheaLineGap = 200
 
     for draw in LOWERCASE_DRAWERS:
         draw(font)
@@ -3059,8 +3204,16 @@ def main():
 
     draw_accented(font)
     draw_accented2(font)
+    draw_alternates(font)
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+    import finalize
+    finalize.write_alternates_fea(font)
+    anchors_added = finalize.anchors.add_anchors(font)
+    turned += fix_directions(font)
+    merged += union_all(font)
     pairs = set_kerning(font)
-    print(f"Reversed contours in {turned} glyphs, unioned {merged}, {pairs} kern pairs")
+    slivers = tidy_contours(font)
+    print(f"Reversed contours in {turned} glyphs, unioned {merged}, {slivers} slivers dropped, {anchors_added} anchors, {pairs} kern pairs")
 
     order = list(font.lib.get("public.glyphOrder", []))
     for g in font:

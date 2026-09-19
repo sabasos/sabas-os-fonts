@@ -1,54 +1,120 @@
 # ui/features.fea
-# Sabas UI OpenType layout features (§8, §10).
+# Sabas UI OpenType layout features (brief section 8).
 # Included by each UI master UFO's features.fea via:
 #   include(../features/ui/features.fea);
+#
+# ufo2ft hands feaLib one include directory, the UFO's parent (sources/sabas-ui/),
+# and resolves every include against it, so the includes below are written from
+# there rather than relative to this file.
+# Every feature below applies to all of these. Without them locl's `script latn`
+# creates a Latin script table holding only locl, and Latin text stops seeing
+# every other feature.
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+languagesystem latn ROM;
+languagesystem latn MOL;
 
-# ufo2ft gives feaLib a single include directory — the UFO's parent, i.e.
-# sources/<family>/ — and resolves *every* include against it, not against the
-# file doing the including. So these two are written from sources/<family>/ as
-# well, the same as the include on line 4, rather than relative to this file.
 include(../features/_shared/mark_classes.fea);
 include(../features/_shared/kern.fea);
 
-# ── locl: locale-specific glyph substitutions (§8) ──────────────────────────
+@figs      = [zero one two three four five six seven eight nine];
+@figs_tnum = [zero.tnum one.tnum two.tnum three.tnum four.tnum five.tnum six.tnum seven.tnum eight.tnum nine.tnum];
+@figs_onum = [zero.onum one.onum two.onum three.onum four.onum five.onum six.onum seven.onum eight.onum nine.onum];
+@numr      = [zero.numr one.numr two.numr three.numr four.numr five.numr six.numr seven.numr eight.numr nine.numr];
+@dnom      = [zero.dnom one.dnom two.dnom three.dnom four.dnom five.dnom six.dnom seven.dnom eight.dnom nine.dnom];
+@sups      = [zero.sups one.sups two.sups three.sups four.sups five.sups six.sups seven.sups eight.sups nine.sups];
+@subs      = [zero.subs one.subs two.subs three.subs four.subs five.subs six.subs seven.subs eight.subs nine.subs];
+
+@case_base = [hyphen endash emdash guillemotleft guillemotright guilsinglleft guilsinglright periodcentered bullet];
+@case_alt  = [hyphen.case endash.case emdash.case guillemotleft.case guillemotright.case guilsinglleft.case guilsinglright.case periodcentered.case bullet.case];
+
+# ccmp: an accent above i or j replaces the dot, so the dot must not survive.
+feature ccmp {
+    sub i' @MarkAbove by dotlessi;
+    sub j' @MarkAbove by uni0237;
+} ccmp;
+
+# locl: Romanian and Moldovan want comma-below, not cedilla, on s and t.
 feature locl {
-    # Romanian: s-comma-below, t-comma-below (not cedilla)
     script latn;
-    language ROM  include_dflt;
+    language ROM include_dflt;
         sub scedilla by scommaaccent;
         sub tcedilla by tcommaaccent;
-    language MOL  include_dflt;
+    language MOL include_dflt;
         sub scedilla by scommaaccent;
         sub tcedilla by tcommaaccent;
-
-    # Serbian/Macedonian: italic forms of б, г, д, п, т
-    # (Latin script block; Cyrillic handled separately when Cyrillic added)
-    script latn;
-    language SRB  include_dflt;
-    language MKD  include_dflt;
-
-    # Turkish: dotless i for uppercase I
-    script latn;
-    language TRK  include_dflt;
-        sub I by I;   # placeholder — dotlessi substitution handled by case feature
 } locl;
 
-# ── mark / mkmk: mark attachment and stacking (§8) ───────────────────────────
-# Deliberately absent. ufo2ft writes both features itself from the anchors in the
-# UFO, and it appends its generated rules to whatever is here rather than
-# replacing it. The placeholder blocks that used to sit here declared @MarkAbove
-# over the same glyphs twice — once in mark, once in mkmk — which is a hard
-# "glyph already defined" error, and their <anchor 0 0> rules would have pinned
-# every diacritic to the origin if it had compiled. Anchors, not FEA, is where
-# this belongs.
+# mark / mkmk are written by the compiler from the anchors in the UFO.
 
-# ── calt: contextual alternates (§8) ─────────────────────────────────────────
-# UI calt is minimal — primarily for figure spacing and currency alignment.
-# Mono calt (texture healing) is in sources/features/mono/calt_healing.fea.
-feature calt {
-    lookup calt_ui {
-        lookupflag 0;
-        # Placeholder: no UI-specific contextual substitutions yet.
-        # Add rules here as design requires (e.g. alternate ampersand in display).
-    } calt_ui;
-} calt;
+feature case {
+    sub @case_base by @case_alt;
+} case;
+
+feature tnum {
+    sub @figs by @figs_tnum;
+} tnum;
+
+feature pnum {
+    sub @figs_tnum by @figs;
+} pnum;
+
+feature onum { sub @figs by @figs_onum; } onum;
+feature lnum { sub @figs_onum by @figs; } lnum;
+
+feature numr { sub @figs by @numr; } numr;
+feature dnom { sub @figs by @dnom; } dnom;
+feature sups { sub @figs by @sups; } sups;
+feature subs { sub @figs by @subs; } subs;
+
+# frac: digits before a slash become numerators, digits after it denominators.
+# Digit runs up to six long are handled; the lookahead has to name each length.
+lookup FRAC_BAR  { sub slash by fraction; } FRAC_BAR;
+lookup FRAC_NUMR { sub @figs by @numr; } FRAC_NUMR;
+lookup FRAC_DNOM { sub @figs by @dnom; } FRAC_DNOM;
+
+feature frac {
+    lookup FRAC_BAR;
+    sub @figs' lookup FRAC_NUMR fraction;
+    sub @figs' lookup FRAC_NUMR @figs fraction;
+    sub @figs' lookup FRAC_NUMR @figs @figs fraction;
+    sub @figs' lookup FRAC_NUMR @figs @figs @figs fraction;
+    sub @figs' lookup FRAC_NUMR @figs @figs @figs @figs fraction;
+    sub @figs' lookup FRAC_NUMR @figs @figs @figs @figs @figs fraction;
+    sub fraction @figs' lookup FRAC_DNOM;
+    sub @dnom @figs' lookup FRAC_DNOM;
+} frac;
+
+# ordn: a, o after a figure become the ordinal indicators.
+feature ordn {
+    sub @figs a' by ordfeminine;
+    sub @figs o' by ordmasculine;
+} ordn;
+
+include(../features/ui/alternates.fea);
+
+feature ss02 { sub l by l.ss02; } ss02;
+feature ss03 { sub three by three.ss03; } ss03;
+feature cv01 { sub zero by zero.cv01; } cv01;
+feature cv02 { sub four by four.cv02; } cv02;
+
+# aalt: every single-glyph alternate in one place, for applications that offer a
+# glyph picker rather than feature toggles. Kept last so every feature it names
+# already exists.
+feature aalt {
+    feature locl;
+    feature case;
+    feature tnum;
+    feature pnum;
+    feature onum;
+    feature lnum;
+    feature numr;
+    feature dnom;
+    feature sups;
+    feature subs;
+    feature ss01;
+    feature ss02;
+    feature ss03;
+    feature cv01;
+    feature cv02;
+} aalt;

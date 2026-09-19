@@ -8,7 +8,10 @@ All masters are rebuilt after Regular is updated.
 """
 import shutil
 from pathlib import Path
+import sys
 import ufoLib2
+
+sys.path.insert(0, str(Path(__file__).parent))
 
 UFO = Path("sources/sabas-ui/SabasUI-Regular.ufo")
 
@@ -40,65 +43,68 @@ def quad(pen, x0, y0, x1, y1):
     pen.closePath()
 
 
+def _t1():
+    """The T1 generator's stroke tools, imported without running its main()."""
+    sys.path.insert(0, str(Path(__file__).parent / "strike"))
+    import build_t1_glyphs
+    return build_t1_glyphs
+
+
+ACCENT_NIB = (66, 60)          # accents are a little lighter than the stems
+
+
 def add_new_marks(font):
-    # hookabovecomb U+0309 — small hook above, used in Vietnamese
-    # Shape: a small open hook at ~820-880 height, zero advance
-    def draw_hook(pen):
-        # Hook: starts at top, curves left and down
-        pen.moveTo((0, 880))
-        pen.curveTo((-40, 880), (-60, 860), (-60, 840))
-        pen.curveTo((-60, 820), (-40, 810), (-20, 815))
-        pen.lineTo((-16, 807))
-        pen.lineTo((-24, 807))
-        pen.curveTo((-52, 800), (-76, 812), (-76, 840))
-        pen.curveTo((-76, 872), (-52, 896), (0, 896))
-        pen.closePath()
-    add_glyph(font, "hookabovecomb", 0x0309, 0, draw_hook)
+    T1 = _t1()
 
-    # dotbelowcomb U+0323 — dot below baseline, used in Vietnamese
-    def draw_dotbelow(pen):
-        cx, cy, r = 0, -120, 28
-        pen.moveTo((cx - r, cy))
-        pen.curveTo((cx - r, cy + r), (cx, cy + r), (cx, cy + r))
-        pen.curveTo((cx + r, cy + r), (cx + r, cy), (cx + r, cy))
-        pen.curveTo((cx + r, cy - r), (cx, cy - r), (cx, cy - r))
-        pen.curveTo((cx - r, cy - r), (cx - r, cy), (cx - r, cy))
-        pen.closePath()
-    add_glyph(font, "dotbelowcomb", 0x0323, 0, draw_dotbelow)
+    # hookabovecomb U+0309: the curl of a question mark, sitting where the other
+    # above marks sit (bottom at 800). One centreline, so the weight holds round
+    # the turn.
+    g = add_glyph(font, "hookabovecomb", 0x0309, 0)
+    T1.stroke(g, T1.spline([
+        (-46, 872, 82.0, None, 44.0),
+        (0,   928, 0.0,  46.0, 46.0),
+        (48,  874, 270.0, 42.0, 34.0),
+        (6,   838, 205.0, 34.0, None),
+    ]), *ACCENT_NIB)
 
-    # horncomb U+031B — combining horn, used in ơ ư
-    def draw_horn(pen):
-        # Small curved stroke extending right from top-right of base letter
-        pen.moveTo((0, 680))
-        pen.curveTo((20, 700), (40, 700), (50, 690))
-        pen.curveTo((60, 680), (60, 660), (40, 650))
-        pen.lineTo((36, 658))
-        pen.curveTo((52, 666), (52, 680), (44, 688))
-        pen.curveTo((36, 696), (20, 694), (4, 676))
-        pen.closePath()
-    add_glyph(font, "horncomb", 0x031B, 0, draw_horn)
+    # dotbelowcomb U+0323: a true circle at the size of the i-dot.
+    g = add_glyph(font, "dotbelowcomb", 0x0323, 0)
+    T1.dot(g, 0, -118, 46)
+
+    # horncomb U+031B: a short stroke that leaves the letter up and to the right.
+    # It starts at the origin, so each base places it where its own outline is.
+    g = add_glyph(font, "horncomb", 0x031B, 0)
+    T1.stroke(g, T1.spline([
+        (0,   0,   62.0, None, 44.0),
+        (58,  108, 42.0, 40.0, 34.0),
+        (118, 150, 18.0, 34.0, None),
+    ]), 62, 56)
+
+
+def _ink(font, name):
+    from fontTools.pens.boundsPen import BoundsPen
+    p = BoundsPen(font)
+    font[name].draw(p)
+    return p.bounds
+
+
+def _horn_start(font, base, ring):
+    """Where the horn leaves a base: on the ring at 40 degrees, or in the right stem."""
+    import math
+    x0, y0, x1, y1 = _ink(font, base)
+    if ring:
+        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+        rx, ry = (x1 - x0) / 2 - 44, (y1 - y0) / 2 - 38
+        return round(cx + rx * math.cos(math.radians(40))), round(cy + ry * math.sin(math.radians(40)))
+    return round(x1 - 44), round(y1 - 120)
 
 
 def add_vietnamese_bases(font):
-    # Ohorn U+01A0 — O with horn: O + horncomb component
-    o_w = font["O"].width
-    add_glyph(font, "Ohorn", 0x01A0, o_w,
-              components=[("O", 0, 0), ("horncomb", o_w // 2, 0)])
-
-    # ohorn U+01A1
-    o_w = font["o"].width
-    add_glyph(font, "ohorn", 0x01A1, o_w,
-              components=[("o", 0, 0), ("horncomb", o_w // 2, 0)])
-
-    # Uhorn U+01AF — U with horn
-    u_w = font["U"].width
-    add_glyph(font, "Uhorn", 0x01AF, u_w,
-              components=[("U", 0, 0), ("horncomb", u_w // 2, 0)])
-
-    # uhorn U+01B0
-    u_w = font["u"].width
-    add_glyph(font, "uhorn", 0x01B0, u_w,
-              components=[("u", 0, 0), ("horncomb", u_w // 2, 0)])
+    for name, cp, base, ring in [("Ohorn", 0x01A0, "O", True), ("ohorn", 0x01A1, "o", True),
+                                 ("Uhorn", 0x01AF, "U", False), ("uhorn", 0x01B0, "u", False)]:
+        hx, hy = _horn_start(font, base, ring)
+        add_glyph(font, name, cp, font[base].width,
+                  components=[(base, 0, 0), ("horncomb", hx, hy)])
 
 
 def add_latin_ext_a(font):
@@ -127,8 +133,6 @@ def add_latin_ext_a(font):
         ("rcommaaccent",  0x0157, "r",  "commaaccentcomb"),
         ("Scircumflex",   0x015C, "S",  "circumflexcomb"),
         ("scircumflex",   0x015D, "s",  "circumflexcomb"),
-        ("Tcommaaccent",  0x0162, "T",  "commaaccentcomb"),
-        ("tcommaaccent",  0x0163, "t",  "commaaccentcomb"),
         ("Utilde",        0x0168, "U",  "tildecomb"),
         ("utilde",        0x0169, "u",  "tildecomb"),
         ("Ubreve",        0x016C, "U",  "brevecomb"),
@@ -208,6 +212,10 @@ def main():
     add_vietnamese_bases(font)
     add_latin_ext_a(font)
     add_standalone(font)
+
+    import finalize
+    added, n_anchors, pairs = finalize.finalize(font)
+    print(f"ss01 alternates +{added}, {n_anchors} anchors, {pairs} kern pairs")
 
     font.save(UFO, overwrite=True)
     print(f"Saved {UFO}  ({len(font)} glyphs)")

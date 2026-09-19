@@ -46,21 +46,22 @@ def add_gasp(font: TTFont) -> None:
 def add_stat_axis_values(font: TTFont) -> None:
     """Rebuild STAT using fontTools.otlLib.builder.buildStatTable.
 
-    Format 2 (range) for all weight/wdth/opsz/slnt/GRAD values.
+    Format 2 (range) for the weight/wdth/opsz/slnt/GRAD values, one axis per fvar axis.
     Format 3 (linked) for Regular↔Bold style linking.
     """
     from fontTools.otlLib.builder import buildStatTable
 
     axes = [
         dict(tag="wght", name="Weight", values=[
-            dict(nominalValue=100, name="Thin",      rangeMinValue=1,    rangeMaxValue=150),
-            dict(nominalValue=300, name="Light",     rangeMinValue=150,  rangeMaxValue=350),
+            dict(nominalValue=100,  name="Thin",      rangeMinValue=1,    rangeMaxValue=200),
+            dict(nominalValue=300,  name="Light",     rangeMinValue=200,  rangeMaxValue=350),
             dict(value=400, name="Regular",   flags=0x2, linkedValue=700),   # F3: linked to Bold
-            dict(nominalValue=500, name="Medium",    rangeMinValue=450,  rangeMaxValue=550),
-            dict(nominalValue=600, name="SemiBold",  rangeMinValue=550,  rangeMaxValue=650),
+            dict(nominalValue=500,  name="Medium",    rangeMinValue=450,  rangeMaxValue=550),
+            dict(nominalValue=600,  name="SemiBold",  rangeMinValue=550,  rangeMaxValue=650),
             dict(value=700, name="Bold",      linkedValue=400),              # F3: linked to Regular
-            dict(nominalValue=800, name="ExtraBold", rangeMinValue=800,  rangeMaxValue=900),
-            dict(nominalValue=900, name="Black",     rangeMinValue=900,  rangeMaxValue=1000),
+            dict(nominalValue=800,  name="ExtraBold", rangeMinValue=750,  rangeMaxValue=850),
+            dict(nominalValue=900,  name="Black",     rangeMinValue=850,  rangeMaxValue=950),
+            dict(nominalValue=1000, name="Ultra",     rangeMinValue=950,  rangeMaxValue=1000),
         ]),
         dict(tag="wdth", name="Width", values=[
             dict(nominalValue=75,  name="Condensed", rangeMinValue=50,    rangeMaxValue=87.5),
@@ -81,11 +82,6 @@ def add_stat_axis_values(font: TTFont) -> None:
             dict(nominalValue=0,    name="GradNorm", rangeMinValue=-100, rangeMaxValue=75,  flags=0x2),
             dict(nominalValue=150,  name="GradMax",  rangeMinValue=75,   rangeMaxValue=150),
         ]),
-        dict(tag="XOPQ", name="X Opaque"),
-        dict(tag="YOPQ", name="Y Opaque"),
-        dict(tag="XTRA", name="X Transparent"),
-        dict(tag="YTLC", name="Y Transparent LC"),
-        dict(tag="YTUC", name="Y Transparent UC"),
     ]
 
     buildStatTable(font, axes)

@@ -5,67 +5,125 @@
     <key>f</key>
     <dict>
       <key>i</key>
-      <integer>-20</integer>
+      <integer>-17</integer>
     </dict>
     <key>public.kern1.A</key>
     <dict>
+      <key>public.kern2.Round</key>
+      <integer>-17</integer>
       <key>public.kern2.T</key>
-      <integer>-60</integer>
-      <key>public.kern2.VWY</key>
       <integer>-55</integer>
+      <key>public.kern2.VWY</key>
+      <integer>-51</integer>
+      <key>public.kern2.quote</key>
+      <integer>-21</integer>
+      <key>public.kern2.vwy</key>
+      <integer>-21</integer>
     </dict>
     <key>public.kern1.FP</key>
     <dict>
       <key>public.kern2.A</key>
-      <integer>-50</integer>
-      <key>public.kern2.a</key>
-      <integer>-30</integer>
+      <integer>-47</integer>
       <key>public.kern2.period</key>
-      <integer>-70</integer>
+      <integer>-68</integer>
+      <key>public.kern2.round</key>
+      <integer>-26</integer>
+    </dict>
+    <key>public.kern1.K</key>
+    <dict>
+      <key>public.kern2.Round</key>
+      <integer>-17</integer>
+      <key>public.kern2.round</key>
+      <integer>-21</integer>
+      <key>public.kern2.vwy</key>
+      <integer>-21</integer>
     </dict>
     <key>public.kern1.L</key>
     <dict>
+      <key>public.kern2.Round</key>
+      <integer>-17</integer>
       <key>public.kern2.T</key>
-      <integer>-60</integer>
+      <integer>-55</integer>
       <key>public.kern2.VWY</key>
+      <integer>-51</integer>
+      <key>public.kern2.quote</key>
       <integer>-60</integer>
+    </dict>
+    <key>public.kern1.OC</key>
+    <dict>
+      <key>public.kern2.A</key>
+      <integer>-17</integer>
+      <key>public.kern2.T</key>
+      <integer>-13</integer>
+      <key>public.kern2.VWY</key>
+      <integer>-17</integer>
+    </dict>
+    <key>public.kern1.R</key>
+    <dict>
+      <key>public.kern2.T</key>
+      <integer>-17</integer>
+      <key>public.kern2.VWY</key>
+      <integer>-17</integer>
     </dict>
     <key>public.kern1.T</key>
     <dict>
       <key>public.kern2.A</key>
-      <integer>-60</integer>
-      <key>public.kern2.a</key>
-      <integer>-70</integer>
+      <integer>-64</integer>
+      <key>public.kern2.Round</key>
+      <integer>-21</integer>
+      <key>public.kern2.lowstem</key>
+      <integer>-42</integer>
       <key>public.kern2.period</key>
-      <integer>-80</integer>
+      <integer>-76</integer>
+      <key>public.kern2.round</key>
+      <integer>-68</integer>
+      <key>public.kern2.vwy</key>
+      <integer>-47</integer>
     </dict>
     <key>public.kern1.VWY</key>
     <dict>
       <key>public.kern2.A</key>
-      <integer>-55</integer>
-      <key>public.kern2.a</key>
-      <integer>-50</integer>
+      <integer>-51</integer>
+      <key>public.kern2.Round</key>
+      <integer>-17</integer>
+      <key>public.kern2.lowstem</key>
+      <integer>-26</integer>
       <key>public.kern2.period</key>
-      <integer>-70</integer>
+      <integer>-64</integer>
+      <key>public.kern2.round</key>
+      <integer>-47</integer>
+      <key>public.kern2.vwy</key>
+      <integer>-13</integer>
     </dict>
     <key>public.kern1.quote</key>
     <dict>
       <key>public.kern2.A</key>
-      <integer>-50</integer>
-      <key>public.kern2.a</key>
-      <integer>-30</integer>
+      <integer>-42</integer>
+      <key>public.kern2.round</key>
+      <integer>-26</integer>
     </dict>
     <key>public.kern1.r</key>
     <dict>
-      <key>public.kern2.a</key>
-      <integer>-20</integer>
       <key>public.kern2.period</key>
-      <integer>-60</integer>
+      <integer>-51</integer>
+      <key>public.kern2.round</key>
+      <integer>-17</integer>
     </dict>
-    <key>public.kern1.y</key>
+    <key>public.kern1.seven</key>
+    <dict>
+      <key>public.kern2.A</key>
+      <integer>-42</integer>
+      <key>public.kern2.period</key>
+      <integer>-68</integer>
+      <key>public.kern2.round</key>
+      <integer>-26</integer>
+    </dict>
+    <key>public.kern1.vwy</key>
     <dict>
       <key>public.kern2.period</key>
-      <integer>-55</integer>
+      <integer>-47</integer>
+      <key>public.kern2.round</key>
+      <integer>-17</integer>
     </dict>
   </dict>
 </plist>

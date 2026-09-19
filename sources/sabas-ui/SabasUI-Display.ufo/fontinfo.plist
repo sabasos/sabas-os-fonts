@@ -12,6 +12,12 @@
     <integer>-200</integer>
     <key>familyName</key>
     <string>Sabas UI</string>
+    <key>openTypeHheaAscender</key>
+    <integer>800</integer>
+    <key>openTypeHheaDescender</key>
+    <integer>-200</integer>
+    <key>openTypeHheaLineGap</key>
+    <integer>200</integer>
     <key>openTypeNamePreferredFamilyName</key>
     <string>Sabas UI</string>
     <key>openTypeNamePreferredSubfamilyName</key>
@@ -40,21 +46,21 @@
     <real>0.039625</real>
     <key>postscriptBlueValues</key>
     <array>
-      <integer>-13</integer>
+      <integer>-15</integer>
       <integer>0</integer>
-      <integer>447</integer>
-      <integer>460</integer>
-      <integer>605</integer>
-      <integer>613</integer>
-      <integer>630</integer>
-      <integer>639</integer>
+      <integer>525</integer>
+      <integer>540</integer>
+      <integer>710</integer>
+      <integer>720</integer>
+      <integer>740</integer>
+      <integer>750</integer>
     </array>
     <key>postscriptFontName</key>
     <string>SabasUI-Regular</string>
     <key>postscriptOtherBlues</key>
     <array>
-      <integer>-183</integer>
-      <integer>-175</integer>
+      <integer>-215</integer>
+      <integer>-205</integer>
     </array>
     <key>styleName</key>
     <string>Display</string>

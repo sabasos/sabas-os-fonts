@@ -1,9 +1,1 @@
-# Sabas Mono features
-# Include order enforces lookup index ordering: ccmp < ss01 < calt
-
-include(../features/mono/ss01_ligatures.fea);
-include(../features/mono/calt_healing.fea);
-
-feature zero {
-    sub zero by zero.slash;
-} zero;
+include(../features/mono/features.fea);
